@@ -6,13 +6,10 @@ import { StyleSheet, Text, Button } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import ChatListScreen from './screens/ChatListScreen/ChatListScreen';
-import ChatSettingScreen from './screens/ChatSettingScreen/ChatSettingScreen';
+import AppNavigator from './navigation/AppNavigator';
 
 SplashScreen.preventAutoHideAsync();
-const Stack = createStackNavigator();
+
 
 
 export default function App() {
@@ -22,7 +19,18 @@ export default function App() {
     const prepare = async() => {
       try{
         await Font.loadAsync({
-          "black": require("./assets/fonts/OpenSans_Condensed-Bold.ttf")
+          "bold": require("./assets/fonts/OpenSans-Bold.ttf"),
+          "boldItalic": require("./assets/fonts/OpenSans-BoldItalic.ttf"),
+          "extraBold": require("./assets/fonts/OpenSans-ExtraBold.ttf"),
+          "extraBoldItalic": require("./assets/fonts/OpenSans-ExtraBoldItalic.ttf"),
+          "italic": require("./assets/fonts/OpenSans-Italic.ttf"),
+          "light": require("./assets/fonts/OpenSans-Light.ttf"),
+          "lightItalic": require("./assets/fonts/OpenSans-LightItalic.ttf"),
+          "medium": require("./assets/fonts/OpenSans-Medium.ttf"),
+          "mediumItalic": require("./assets/fonts/OpenSans-MediumItalic.ttf"),
+          "regular": require("./assets/fonts/OpenSans-Regular.ttf"),
+          "semiBold": require("./assets/fonts/OpenSans-SemiBold.ttf"),
+          "semiBoldItalic": require("./assets/fonts/OpenSans-SemiBoldItalic.ttf"),
         });
       }catch(error){
         console.log(error);
@@ -46,14 +54,7 @@ export default function App() {
 
   return (
     <SafeAreaProvider style={styles.container} onLayout={onLayoutView}>
-        <NavigationContainer>
-          <Stack.Navigator>
-            <Stack.Screen name="Home" component={ChatListScreen} />
-            <Stack.Screen name="ChatSettings" component={ChatSettingScreen} 
-              options={{gestureEnabled: false, headerTitle: 'Settings', animationEnabled: false, headerBackTitle: 'Back'}}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
+       <AppNavigator />
     </SafeAreaProvider>
   );
 }
