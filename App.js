@@ -2,15 +2,19 @@
 import 'react-native-gesture-handler';
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, Text, Button } from 'react-native';
+import { StyleSheet, Text, Button, LogBox } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
 import AppNavigator from './navigation/AppNavigator';
+import { Provider } from 'react-redux';
+import { store } from './store/store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+LogBox.ignoreLogs(['AsyncStorage has been extracted']);
+// AsyncStorage.clear();
 
 SplashScreen.preventAutoHideAsync();
-
-
 
 export default function App() {
 
@@ -53,9 +57,12 @@ export default function App() {
   }
 
   return (
-    <SafeAreaProvider style={styles.container} onLayout={onLayoutView}>
-       <AppNavigator />
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <SafeAreaProvider style={styles.container} onLayout={onLayoutView}>
+        <AppNavigator />
+      </SafeAreaProvider>
+    </Provider>
+   
   );
 }
 
