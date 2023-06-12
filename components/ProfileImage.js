@@ -13,15 +13,14 @@ import { ActivityIndicator } from 'react-native';
 const ProfileImage = props => {
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(false);
+    const showEditButton = props.showEditButton && props.showEditButton === true;
+    
 
     const source = props.uri ?  { uri: props.uri } : userImage;
     const [image, setImage] = useState(source);
 
 
     const userId = props.userId;
-
-    console.log("userId");
-    console.log(userId);
 
     const pickImage = async () => {
         try {
@@ -53,8 +52,10 @@ const ProfileImage = props => {
         }
     }
 
+    const Container = showEditButton ? TouchableOpacity : View;
+
     return (
-        <TouchableOpacity onPress={pickImage}>
+        <Container onPress={pickImage}>
             {isLoading ? 
                 <View height={props.size} width={props.size} style={styles.loadingContainer}>
                     <ActivityIndicator size={'small'} color={colors.primary} style={{marginTop: 10}} /> 
@@ -64,11 +65,13 @@ const ProfileImage = props => {
                 source={image}/>
             }
 
-            <View style={styles.editIconContainer}>
+            {showEditButton && !isLoading && <View style={styles.editIconContainer}>
                 <FontAwesome name="pencil" size={15} color="black" />
-            </View>
+            </View>}
+
+            
            
-        </TouchableOpacity>
+        </Container>
     )
 };
 

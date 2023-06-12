@@ -94,7 +94,7 @@ const SettingsScreen = props => {
 
             <ScrollView contentContainerStyle={styles.formContainer}>
 
-                <ProfileImage size={80} userId={userData.userID} uri={userData.profilePicture}/>
+                <ProfileImage size={80} userId={userData.userID} uri={userData.profilePicture} showEditButton={true}/>
 
                 <Input label="First name" icon="user-o"
                     id="firstName" 
