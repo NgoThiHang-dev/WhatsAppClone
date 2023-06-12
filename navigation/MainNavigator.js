@@ -3,7 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
-import SettingScreen from '../screens/SettingScreen/SettingScreen';
+import SettingsScreen from '../screens/SettingsScreen/SettingsScreen';
 import ChatListScreen from '../screens/ChatListScreen/ChatListScreen';
 import ChatSettingScreen from '../screens/ChatSettingScreen/ChatSettingScreen';
 import ChatScreen from '../screens/ChatScreen/ChatScreen';
@@ -15,7 +15,10 @@ const Tab = createBottomTabNavigator();
 const TabNavigator = () =>{
     return (
       <Tab.Navigator 
-      // screenOptions={{headerTitle: ''}}
+      screenOptions={{headerTitle: '', elevation: 0,
+        shadowOpacity: 0,
+        borderBottomWidth: 0, headerShadowVisible: false  }}
+      
       >
         <Tab.Screen name="ChatList" component={ChatListScreen} 
           options={{
@@ -25,7 +28,7 @@ const TabNavigator = () =>{
             }
           }}
         />
-        <Tab.Screen name="Settings" component={SettingScreen} 
+        <Tab.Screen name="Settings" component={SettingsScreen} 
           options={{
             tabBarLabel: 'Settings', 
             tabBarIcon: (props)=>{ // cach 2: props

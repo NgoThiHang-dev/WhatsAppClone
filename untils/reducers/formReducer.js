@@ -21,6 +21,8 @@ export const reducer = (state, action) =>{
     }
     
     return {
-        inputValues:updatedValues, inputValidities: updatedValidities, formIsValid: updatedFormIsValid
+        inputValues: updatedValues, 
+        inputValidities: updatedValidities, 
+        formIsValid: updatedFormIsValid
     };
 }

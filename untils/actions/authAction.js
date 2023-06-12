@@ -1,6 +1,6 @@
 import { getFirebaseApp } from "../firebaseHelper";
 import {createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword} from 'firebase/auth';
-import {child, getDatabase, ref, set} from 'firebase/database'
+import {child, getDatabase, ref, set, update} from 'firebase/database'
 import { authenticate, logout } from "../../store/authSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getUserData } from "./userAction";
@@ -47,6 +47,7 @@ export const signUp = (firstName, lastName, email, password) =>{
     }
     
 }
+
 export const signIn = (email, password) =>{
     return async dispatch =>{
         const app = getFirebaseApp();
@@ -79,8 +80,8 @@ export const signIn = (email, password) =>{
 
             let message = "Somthing went wrong.";
             
-            if(errorCode === "auth/email-already-in-use" || errorCode === "auth/wrong-password" || errorCode === "auth/user-notfound" ){
-                message = "This email is already in use";
+            if(errorCode === "auth/wrong-password" || errorCode === "auth/user-notfound" ){
+                message = "The username or password was incorrect";
             }
 
             console.log(message);
@@ -89,13 +90,27 @@ export const signIn = (email, password) =>{
     }
     
 }
+
 export const userLogout = () =>{
     return async dispatch =>{
         AsyncStorage.clear();
         clearTimeout(timer);
-
         dispatch(logout());
     }
+}
+
+export const updateSignedInUserData = async(userId, newData) =>{
+    if(newData.firstName && newData.lastName){
+        const firstLast = `${newData.firstName} ${newData.lastName}`.toLowerCase();
+        newData.firstLast= firstLast;
+    }
+
+    
+    const dbRef = ref(getDatabase());
+
+    const childRef = child(dbRef, `users/${userId}`);
+    await update(childRef, newData);
+    // return newData; 
 }
 
 const createUser = async (firstName, lastName, email, userID) =>{

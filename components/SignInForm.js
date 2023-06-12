@@ -75,7 +75,7 @@ const SignInForm = props => {
                 iconPack={Feather} 
                 iconSize={15} 
                 onInputChanged={inputChangedHandler}
-                value={formState.inputValues.email}
+                initialValue={formState.inputValues.email}
                 errorText={formState.inputValidities['email']}
             />
             <Input label="Password"
@@ -86,7 +86,7 @@ const SignInForm = props => {
                 iconPack={FontAwesome} 
                 iconSize={15} 
                 onInputChanged={inputChangedHandler}
-                value={formState.inputValues.password}
+                initialValue={formState.inputValues.password}
                 errorText={formState.inputValidities['password']}
             />
             {isLoading ? <ActivityIndicator size={'small'} color={colors.primary} style={{marginTop: 10}} /> :

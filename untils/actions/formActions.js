@@ -1,4 +1,4 @@
-import { validateEmail, validatePassword, validateString } from '../..//untils/validationContraint';
+import { validateEmail, validateLength, validatePassword, validateString } from '../..//untils/validationContraint';
 
 export const validateInput = (inputID, inputValue) =>{
     if(inputID === 'firstName' || inputID === 'lastName'){
@@ -9,6 +9,11 @@ export const validateInput = (inputID, inputValue) =>{
          return validateEmail(inputID, inputValue);
 
      } else if(inputID === 'password'){
-         return validatePassword(inputID, inputValue);
-     }
+         
+        return validatePassword(inputID, inputValue);
+
+     }  else if(inputID === 'about'){
+        
+        return validateLength(inputID, inputValue, 0, 10, true);
+    }
 }

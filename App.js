@@ -10,6 +10,7 @@ import AppNavigator from './navigation/AppNavigator';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import colors from './constants/colors';
 
 LogBox.ignoreLogs(['AsyncStorage has been extracted']);
 // AsyncStorage.clear();
@@ -69,13 +70,13 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
   },
   text1:{
     color: '#c1c1c1',
-    fontSize: 20,
-    marginTop: 10, 
-    marginBottom: 10,
+    fontSize: 18,
+    // marginTop: 10, 
+    // marginBottom: 10,
     color: 'black',
   }
 });

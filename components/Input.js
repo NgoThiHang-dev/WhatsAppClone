@@ -2,11 +2,15 @@ import React from 'react';
 import { StyleSheet, View, Text, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import colors from '../constants/colors';
+import { useState } from 'react';
 // import { FontAwesome } from '@expo/vector-icons';
 
 const Input = props => {
+    const [value, setValue] = useState(props.initialValue);
+
 
     const onChangeText = text => {
+        setValue(text);
         props.onInputChanged(props.id, text);
     }
     
@@ -16,7 +20,10 @@ const Input = props => {
             <View style={styles.inputContainer}>
                 {/* <FontAwesome name="user-o" size={24} style={styles.icon}/> */}
                 {props.icon && <props.iconPack name={props.icon} size={props.iconSize} style={styles.icon}/>}
-                <TextInput {...props} style={styles.input} onChangeText={onChangeText}/>
+                <TextInput {...props} 
+                style={styles.input} 
+                onChangeText={onChangeText} 
+                value={value}/>
             </View>
             {props.errorText && (
                 <View style={styles.errorContainer}>
