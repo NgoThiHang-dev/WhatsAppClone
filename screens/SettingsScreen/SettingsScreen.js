@@ -23,7 +23,6 @@ const SettingsScreen = props => {
     const dispatch = useDispatch();
 
     const userData = useSelector(state => state.auth.userData);
-    console.log(userData);
 
     const firstName = userData.firstName || '';
     const lastName = userData.lastName || '';

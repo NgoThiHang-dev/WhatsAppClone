@@ -12,6 +12,8 @@ import { FontAwesome } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { searchUsers } from '../untils/actions/userAction';
 import DataItem from '../components/DataItem';
+import { useDispatch, useSelector } from 'react-redux';
+import { setStoredUsers } from '../store/userSlide';
 
 const NewChatScreen = props => {
 
@@ -19,6 +21,10 @@ const NewChatScreen = props => {
     const [users, setUsers] = useState();
     const [noResultsFound, setNoResultsFound] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+
+    const dispatch = useDispatch();
+
+    const userData = useSelector(state => state.auth.userData);
 
     useEffect(()=>{
         props.navigation.setOptions({
@@ -41,6 +47,7 @@ const NewChatScreen = props => {
             }
             setIsLoading(true);          
             const userResult = await searchUsers(searchTerm);
+            delete userResult[userData.userId];
 
             setUsers(userResult);
 
@@ -48,6 +55,7 @@ const NewChatScreen = props => {
                 setNoResultsFound(true);
             }else{
                 setNoResultsFound(false);
+                dispatch(setStoredUsers({newUsers: userResult}));
             }
 
             setIsLoading(false);
@@ -58,7 +66,11 @@ const NewChatScreen = props => {
 
     }, [searchTerm])
 
-    
+    const userPressed = userId =>{
+        props.navigation.navigate("ChatList",{
+            selectedUserId: userId
+        })
+    }
 
   return (
     <PageContainer>
@@ -78,11 +90,10 @@ const NewChatScreen = props => {
                 renderItem={(itemData)=>{
                     const userId = itemData.item;
                     const userData = users[userId];
-                    console.log("userData");
-                    console.log(userData);
                     return <DataItem title={`${userData.firstName} ${userData.lastName}`} 
                         subTitle={userData.about}
                         image={userData.profilePicture}
+                        onPress={()=>userPressed(userId)}
                     />
                 }}
             />
@@ -94,7 +105,6 @@ const NewChatScreen = props => {
                 <Text style={styles.noResultsText}>No users found!</Text>
             </View>
         )}
-
         {!isLoading && !users && (
             <View style={commonStyles.center}>
                 <FontAwesome name="users" size={55} color={colors.lightGrey} style={styles.noResultsIcon}/>

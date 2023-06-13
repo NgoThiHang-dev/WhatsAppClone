@@ -1,17 +1,13 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
 import colors from '../constants/colors';
 import ProfileImage from './ProfileImage';
 
 const DataItem = props => {
     const {title, subTitle, image} = props;
 
-    console.log("props");
-    console.log(props);
-
   return (
-    <TouchableWithoutFeedback>
+    <TouchableWithoutFeedback onPress={props.onPress}>
         <View style={styles.container}>
 
             <ProfileImage uri={image} size={40}/>
@@ -31,12 +27,10 @@ const styles = StyleSheet.create({
     container:{
         flexDirection:'row',
         alignItems: 'center',
-        backgroundColor: colors.extraLightGrey,
-        height: 30,
-        marginVertical: 8,
-        paddingHorizontal: 5,
-        paddingVertical: 5,
-        borderRadius: 5,
+        borderBottomColor: colors.extraLightGrey,
+        borderBottomWidth: 1,
+        paddingVertical: 8,
+        minHeight: 50
     },
     textContainer: {
         marginLeft: 14,
