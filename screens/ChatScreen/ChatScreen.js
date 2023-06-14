@@ -20,7 +20,7 @@ const ChatScreen = props => {
     const [errorBannerText, setErrorBannerText] = useState("");
 
     const [chatId, setChatId] = useState(props.route?.params?.chatId);
-    const chatData = (chatId && storedChats[chatId]) || props.route?.params?.newChatData;
+    
 
     const chatMessages = useSelector(state => {
         if(!chatId) return [];
@@ -38,8 +38,7 @@ const ChatScreen = props => {
         return messagesList;
     });
 
-    console.log("chatMessages");
-    console.log(chatMessages);
+    const chatData = (chatId && storedChats[chatId]) || props.route?.params?.newChatData;
 
 
     const getChatTitleFromName = () =>{
@@ -95,17 +94,25 @@ const ChatScreen = props => {
                         {errorBannerText !== "" && 
                         <Bubble text={errorBannerText} type="error" />}
 
-                        {chatId && <FlatList data={chatMessages}
-                            renderItem={(itemData)=>{
-                                const message = itemData.item;
+                        {chatId && 
+                            <FlatList data={chatMessages}
+                                renderItem={(itemData)=>{
+                                    const message = itemData.item;
 
-                                const isOwnMessage = message.sendBy === userData.userID;
-                                const messageType = isOwnMessage ? "myMessage" : 'theirMessage';
+                                    const isOwnMessage = message.sendBy === userData.userID;
+                                    const messageType = isOwnMessage ? "myMessage" : 'theirMessage';
 
 
-                                return <Bubble type={messageType} text={message.text}/>
-                            }}
-                        />} 
+                                    return <Bubble type={messageType} 
+                                                text={message.text} 
+                                                messageId={message.key} 
+                                                userId={userData.userID} 
+                                                chatId={chatId}
+                                                date={message.sendAt}
+                                            />
+                                }}
+                            />
+                        } 
 
 
                     </PageContainer>

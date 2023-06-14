@@ -11,6 +11,7 @@ import { Provider } from 'react-redux';
 import { store } from './store/store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import colors from './constants/colors';
+import { MenuProvider } from 'react-native-popup-menu';
 
 LogBox.ignoreLogs(['AsyncStorage has been extracted']);
 // AsyncStorage.clear();
@@ -60,7 +61,13 @@ export default function App() {
   return (
     <Provider store={store}>
       <SafeAreaProvider style={styles.container} onLayout={onLayoutView}>
-        <AppNavigator />
+
+        <MenuProvider>
+
+          <AppNavigator />
+
+        </MenuProvider>
+
       </SafeAreaProvider>
     </Provider>
    

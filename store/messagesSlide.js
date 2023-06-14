@@ -3,7 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const messagesSlide = createSlice({
     name: 'messages',
     initialState: {
-        messagesData: {}
+        messagesData: {},
+        starredMessages: {}
     },
     reducers: {   
         setChatMessages: (state, action)=>{
@@ -14,8 +15,20 @@ const messagesSlide = createSlice({
 
             state.messagesData = existingMessages;
         },
+        addStarredMessage: (state, action)=>{
+            const {starredMessageData} = action.payload;
+            state.starredMessages[starredMessageData.messageId] = starredMessageData;
+        },
+        removeStarredMessage: (state, action)=>{
+            const {messageId} = action.payload;
+            delete state.starredMessages[messageId];
+        },
+        setStarredMessages: (state, action)=>{
+            const {starredMessages} = action.payload;
+            state.starredMessages = {...starredMessages}
+        }
     }
 })
 
-export const setChatMessages = messagesSlide.actions.setChatMessages;
+export const {setChatMessages, addStarredMessage, removeStarredMessage, setStarredMessages } = messagesSlide.actions;
 export default messagesSlide.reducer;

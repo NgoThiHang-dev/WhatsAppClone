@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import SettingsScreen from '../screens/SettingsScreen/SettingsScreen';
@@ -11,12 +11,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { child, get, getDatabase, off, onValue, ref } from 'firebase/database';
 import { getFirebaseApp } from '../untils/firebaseHelper';
 import { setChatsData } from '../store/chatSlice';
-import { useState } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import colors from '../constants/colors';
 import commonStyles from '../constants/commonStyles';
 import { setStoredUsers } from '../store/userSlide';
-import { setChatMessages } from '../store/messagesSlide';
+import { setChatMessages, setStarredMessages } from '../store/messagesSlide';
 
 
 const Stack = createNativeStackNavigator();
@@ -83,6 +82,7 @@ const MainNavigator = props => {
 
   useEffect(()=>{
     console.log("Subscribing to firebase listeners");
+
     const app = getFirebaseApp();
     const dbRef = ref(getDatabase(app));
 
@@ -97,7 +97,7 @@ const MainNavigator = props => {
       const chatsData = {};
       let chatsFoundCount = 0;
 
-      for(let i=0; i< chatIds.length; i++){
+      for(let i = 0; i < chatIds.length; i++){
         const chatId = chatIds[i];
         const chatRef = child(dbRef, `chats/${chatId}`);
         refs.push(chatRef);
@@ -115,12 +115,8 @@ const MainNavigator = props => {
 
               const userRef = child(dbRef, `users/${userId}`);
 
-              console.log("userId ddddddddddddddddd", userId);
 
               get(userRef).then(userSnapshot =>{
-                console.log("userSnapshot", userSnapshot);
-
-
                 const userSnapshotData = userSnapshot.val();
                 dispatch(setStoredUsers({newUsers: {userSnapshotData}}))
               })
@@ -133,7 +129,7 @@ const MainNavigator = props => {
 
           }
 
-          if(chatsFoundCount >=chatIds.length){
+          if(chatsFoundCount >= chatIds.length){
             dispatch(setChatsData({chatsData}));
             setIsLoading(false);
           }
@@ -153,10 +149,16 @@ const MainNavigator = props => {
         }
 
       }
-
-
-
     })
+
+    const userStarredMessagesRef = child(dbRef, `userStarredMessages/${userData.userID}`);
+    refs.push(userStarredMessagesRef);
+
+    onValue(userStarredMessagesRef, querySnapshot =>{
+      const starredMessages = querySnapshot.val() ?? {};
+      dispatch(setStarredMessages({starredMessages}));
+    })
+
     return ()=>{
       console.log('Unsubscribing to firebase listeners');
       refs.forEach(ref =>off(ref));
