@@ -17,7 +17,7 @@ const userSlice = createSlice({
 
             for(let i=0; i < usersArray.length; i++){
                 const userData = usersArray[i];
-                existingUsers[userData.userID] = userData;
+                existingUsers[userData.userId] = userData;
             }
 
             state.storedUsers = existingUsers;

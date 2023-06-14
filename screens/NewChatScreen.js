@@ -1,12 +1,10 @@
-import React from 'react';
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Text, Button, TextInput, FlatList, ActivityIndicator } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../components/CustomHeaderButton';
 import PageContainer from '../components/PageContainer';
 import { AntDesign } from '@expo/vector-icons';
 import colors from '../constants/colors';
-import { useState } from 'react';
 import commonStyles from '../constants/commonStyles'
 import { FontAwesome } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -45,11 +43,16 @@ const NewChatScreen = props => {
                 setNoResultsFound(false);
                 return;
             }
-            setIsLoading(true);          
+            setIsLoading(true);
+
             const userResult = await searchUsers(searchTerm);
             delete userResult[userData.userId];
 
             setUsers(userResult);
+
+            console.log('====================================');
+            console.log("userResult", userResult);
+            console.log('====================================');
 
             if(Object.keys(userResult).length === 0){
                 setNoResultsFound(true);
@@ -90,6 +93,9 @@ const NewChatScreen = props => {
                 renderItem={(itemData)=>{
                     const userId = itemData.item;
                     const userData = users[userId];
+
+                    console.log("userId", userId)
+
                     return <DataItem title={`${userData.firstName} ${userData.lastName}`} 
                         subTitle={userData.about}
                         image={userData.profilePicture}

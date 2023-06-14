@@ -55,10 +55,10 @@ const StackNavigator = props => {
         <Stack.Group>
           <Stack.Screen name="Home" component={TabNavigator} options={{headerShown:false}}/>
           <Stack.Screen name="ChatScreen" component={ChatScreen} 
-              options={{gestureEnabled: false, headerTitle: '', animationEnabled: false, headerBackTitle: 'Back'}}
+              options={{headerTitle: '', headerBackTitle: 'Back'}}
           />
           <Stack.Screen name="ChatSettings" component={ChatSettingScreen} 
-              options={{gestureEnabled: false, headerTitle: 'Settings', animationEnabled: false, headerBackTitle: 'Back'}}
+              options={{ headerTitle: 'Settings', headerBackTitle: 'Back'}}
           />
         </Stack.Group>
 
@@ -72,65 +72,63 @@ const StackNavigator = props => {
   )
 }
 
-const MainNavigator = props => {
+
+const MainNavigator = (props) => {
 
   const dispatch = useDispatch();
+
   const [isLoading, setIsLoading] = useState(true);
 
   const userData = useSelector(state => state.auth.userData);
   const storedUsers = useSelector(state => state.users.storedUsers);
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log("Subscribing to firebase listeners");
 
     const app = getFirebaseApp();
     const dbRef = ref(getDatabase(app));
+    const userChatsRef = child(dbRef, `userChats/${userData.userId}`);
+    const refs = [userChatsRef];
 
-    const userChatRef = child(dbRef, `userChats/${userData.userID}`);
-    const refs = [userChatRef];
-
-    onValue(userChatRef, (querySnapshot)=>{
-      // console.log(querySnapshot.val()) 
+    onValue(userChatsRef, (querySnapshot) => {
       const chatIdsData = querySnapshot.val() || {};
       const chatIds = Object.values(chatIdsData);
 
       const chatsData = {};
       let chatsFoundCount = 0;
 
-      for(let i = 0; i < chatIds.length; i++){
+      for (let i = 0; i < chatIds.length; i++) {
         const chatId = chatIds[i];
         const chatRef = child(dbRef, `chats/${chatId}`);
         refs.push(chatRef);
 
-        onValue(chatRef, (chatSnapshot)=>{
+        onValue(chatRef, (chatSnapshot) => {
           chatsFoundCount++;
-
+          
           const data = chatSnapshot.val();
 
-          if(data){
-            data.key= chatSnapshot.key;
+          if (data) {
+            data.key = chatSnapshot.key;
 
-            data.users.forEach(userId =>{
-              if(storedUsers[userId]) return;
+            data.users.forEach(userId => {
+              if (storedUsers[userId]) return;
 
               const userRef = child(dbRef, `users/${userId}`);
 
-
-              get(userRef).then(userSnapshot =>{
+              get(userRef)
+              .then(userSnapshot => {
                 const userSnapshotData = userSnapshot.val();
-                dispatch(setStoredUsers({newUsers: {userSnapshotData}}))
+                dispatch(setStoredUsers({ newUsers: { userSnapshotData } }))
               })
 
               refs.push(userRef);
-
             })
 
             chatsData[chatSnapshot.key] = data;
-
           }
 
-          if(chatsFoundCount >= chatIds.length){
-            dispatch(setChatsData({chatsData}));
+          if (chatsFoundCount >= chatIds.length) {
+            dispatch(setChatsData({ chatsData }));
             setIsLoading(false);
           }
         })
@@ -138,43 +136,41 @@ const MainNavigator = props => {
         const messagesRef = child(dbRef, `messages/${chatId}`);
         refs.push(messagesRef);
 
-        onValue(messagesRef, messagesSnapshot =>{
+        onValue(messagesRef, messagesSnapshot => {
           const messagesData = messagesSnapshot.val();
-
-          dispatch(setChatMessages({chatId, messagesData}));
+          dispatch(setChatMessages({ chatId, messagesData }));
         })
 
-        if(chatsFoundCount == 0){
+        if (chatsFoundCount == 0) {
           setIsLoading(false);
         }
-
       }
+
     })
 
-    const userStarredMessagesRef = child(dbRef, `userStarredMessages/${userData.userID}`);
+    const userStarredMessagesRef = child(dbRef, `userStarredMessages/${userData.userId}`);
     refs.push(userStarredMessagesRef);
-
-    onValue(userStarredMessagesRef, querySnapshot =>{
+    onValue(userStarredMessagesRef, querySnapshot => {
       const starredMessages = querySnapshot.val() ?? {};
-      dispatch(setStarredMessages({starredMessages}));
+      dispatch(setStarredMessages({ starredMessages }));
     })
 
-    return ()=>{
-      console.log('Unsubscribing to firebase listeners');
-      refs.forEach(ref =>off(ref));
+    return () => {
+      console.log("Unsubscribing firebase listeners");
+      refs.forEach(ref => off(ref));
     }
+  }, []);
 
-  },[])
-
-  if(isLoading){
+  if (isLoading) {
     <View style={commonStyles.center}>
       <ActivityIndicator size={'large'} color={colors.primary} />
     </View>
   }
 
-  return (
-    <StackNavigator/>
-  );
-}
 
-export default MainNavigator
+  return (
+    <StackNavigator />
+  );
+};
+
+export default MainNavigator;

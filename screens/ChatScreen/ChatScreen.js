@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Button, ImageBackground, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, FlatList } from 'react-native';
+import { StyleSheet, View, Text, Button, 
+    ImageBackground, TextInput, TouchableOpacity, 
+    KeyboardAvoidingView, Platform, FlatList } from 'react-native';
 import backgroundImage from '../../assets/images/background-whatapp.jpg'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
@@ -8,76 +10,84 @@ import { useSelector } from 'react-redux';
 import PageContainer from '../../components/PageContainer';
 import Bubble from '../../components/Bubble';
 import { createChat, sendTextMessage } from '../../untils/actions/chatAction';
+import ReplyTo from '../../components/ReplyTo';
 
 const ChatScreen = props => {
-    const [messageText, setMessageText] = useState("");
-    const [chatUsers, setChatUsers]= useState([]);
+    const [chatUsers, setChatUsers] = useState([]);
+  const [messageText, setMessageText] = useState("");
+  const [chatId, setChatId] = useState(props.route?.params?.chatId);
+  const [errorBannerText, setErrorBannerText] = useState("");
+  const [replyingTo, setReplyingTo] = useState();
 
-    const userData = useSelector(state => state.auth.userData);
-    const storedUsers = useSelector(state=> state.users.storedUsers);
-    const storedChats = useSelector(state=> state.chats.chatsData);
+  const userData = useSelector(state => state.auth.userData);
+  const storedUsers = useSelector(state => state.users.storedUsers);
+  const storedChats = useSelector(state => state.chats.chatsData);
+  const chatMessages = useSelector(state => {
+    if (!chatId) return [];
 
-    const [errorBannerText, setErrorBannerText] = useState("");
+    const chatMessagesData = state.messages.messagesData[chatId];
 
-    const [chatId, setChatId] = useState(props.route?.params?.chatId);
-    
+    if (!chatMessagesData) return [];
 
-    const chatMessages = useSelector(state => {
-        if(!chatId) return [];
-        const chatMessagesData =  state.messages.messagesData[chatId];
-        if(!chatMessagesData) return [];
+    const messageList = [];
+    for (const key in chatMessagesData) {
+      const message = chatMessagesData[key];
 
-        const messagesList = [];
-        for(const key in chatMessagesData){
-            const message = chatMessagesData[key];
-            messagesList.push({
-                key,
-                ...message
-            });
-        }
-        return messagesList;
-    });
-
-    const chatData = (chatId && storedChats[chatId]) || props.route?.params?.newChatData;
-
-
-    const getChatTitleFromName = () =>{
-        const otherUserId = chatUsers.find(uid => uid !== userData.userID); //tim ID khac voi ID da dang nhap
-        const otherUserData = storedUsers[otherUserId];
-        return otherUserData && `${otherUserData.firstName} ${otherUserData.lastName}`;
+      messageList.push({
+        key,
+        ...message
+      });
     }
 
-    useEffect(()=>{
-        props.navigation.setOptions({
-           headerTitle: getChatTitleFromName(),
-           headerTitleAlign: 'center'
-        })
+    return messageList;
+  });
 
-        setChatUsers(chatData.users)
-    }, [chatUsers])
+  const chatData = (chatId && storedChats[chatId]) || props.route?.params?.newChatData;
+
+  const getChatTitleFromName = () => {
+    const otherUserId = chatUsers.find(uid => uid !== userData.userId);
+    const otherUserData = storedUsers[otherUserId];
+
+    return otherUserData && `${otherUserData.firstName} ${otherUserData.lastName}`;
+  }
+
+  useEffect(() => {
+    props.navigation.setOptions({
+      headerTitle: getChatTitleFromName()
+    })
+    setChatUsers(chatData.users)
+  }, [chatUsers])
+
+  const sendMessage = useCallback(async () => {
+
+    try {
+        
 
 
-    const sendMessage = useCallback(async()=>{
-        try {
-            let id = chatId;
+      let id = chatId
 
-            if(!id){
-                id = await createChat(userData.userID, props.route.params.newChatData);
-                setChatId(id);
-            }
+        console.log('===================id=================');
+        console.log("id", id);
+        console.log('====================================');
 
-            await sendTextMessage(chatId, userData.userID, messageText);
-            setMessageText("");
+      if (!id) {
+        // No chat Id. Create the chat
+        id = await createChat(userData.userId, props.route.params.newChatData);
+        setChatId(id);
+        console.log("chatIdffffffffffffffffff Screen", chatId);
+      }
 
-        } catch (error) {
-            console.log(error);
-            setErrorBannerText("Message failed to send");
-            setTimeout(() => {
-                setErrorBannerText("");
-            }, 5000);
-        }
+      await sendTextMessage(chatId, userData.userId, messageText, replyingTo && replyingTo.key);
 
-    },[messageText, chatId])
+      setMessageText("");
+      setReplyingTo(null);
+    } catch (error) {
+      console.log(error);
+      setErrorBannerText("Message failed to send");
+      setTimeout(() => setErrorBannerText(""), 5000);
+    }
+  }, [messageText, chatId]);
+
 
     return (
         <SafeAreaView style={styles.container} edges={['right', 'left', 'bottom']}>
@@ -99,23 +109,35 @@ const ChatScreen = props => {
                                 renderItem={(itemData)=>{
                                     const message = itemData.item;
 
-                                    const isOwnMessage = message.sendBy === userData.userID;
+                                    const isOwnMessage = message.sendBy === userData.userId;
                                     const messageType = isOwnMessage ? "myMessage" : 'theirMessage';
 
 
                                     return <Bubble type={messageType} 
                                                 text={message.text} 
                                                 messageId={message.key} 
-                                                userId={userData.userID} 
+                                                userId={userData.userId} 
                                                 chatId={chatId}
                                                 date={message.sendAt}
+                                                setReply={()=>setReplyingTo(message)}
+                                                replyingTo={message.replyingTo && chatMessages.find(i =>i.key === message.replyingTo)}
                                             />
                                 }}
                             />
                         } 
 
-
                     </PageContainer>
+
+                    
+                    {replyingTo && 
+                        <ReplyTo 
+                        text={replyingTo.text} 
+                        user={storedUsers[replyingTo.sendBy]} 
+                        onCancel={()=>setReplyingTo(null)}
+                        />
+                    }
+
+
                 </ImageBackground>
                 <View style={styles.inputContainer}>
                     <TouchableOpacity 

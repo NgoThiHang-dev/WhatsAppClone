@@ -113,28 +113,27 @@ export const updateSignedInUserData = async(userId, newData) =>{
     // return newData; 
 }
 
-const createUser = async (firstName, lastName, email, userID) =>{
+const createUser = async (firstName, lastName, email, userId) => {
     const firstLast = `${firstName} ${lastName}`.toLowerCase();
-
     const userData = {
         firstName,
         lastName,
         firstLast,
         email,
-        userID,
+        userId,
         signUpDate: new Date().toISOString()
-    }
+    };
 
     const dbRef = ref(getDatabase());
-
-    const childRef = child(dbRef, `users/${userID}`);
+    const childRef = child(dbRef, `users/${userId}`);
     await set(childRef, userData);
     return userData;
-
 }
 
-const saveDataToStorage = (token, userID, expiryDate) =>{
+const saveDataToStorage = (token, userId, expiryDate) => {
     AsyncStorage.setItem("userData", JSON.stringify({
-        token, userID, expiryDate: expiryDate.toISOString()
+        token,
+        userId,
+        expiryDate: expiryDate.toISOString()
     }));
 }

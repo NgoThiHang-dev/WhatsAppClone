@@ -1,17 +1,16 @@
 import React, { useRef } from 'react';
-import { StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import colors from '../constants/colors';
-import { Menu, MenuOption, MenuOptions, MenuTrigger } from 'react-native-popup-menu';
+import { Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-menu';
 import uuid from 'react-native-uuid';
 import * as Clipboard from 'expo-clipboard';
 import { MaterialIcons } from '@expo/vector-icons';
-import { FontAwesome } from '@expo/vector-icons';
-import { starMessage } from '../untils/actions/chatAction';
+import { Feather, FontAwesome } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
+import { starMessage } from '../untils/actions/chatAction';
 
-function formatHourseAmPm(dateString) {
+function formatAmPm(dateString) {
     const date = new Date(dateString);
-
     var hours = date.getHours();
     var minutes = date.getMinutes();
     var ampm = hours >= 12 ? 'pm' : 'am';
@@ -19,27 +18,25 @@ function formatHourseAmPm(dateString) {
     hours = hours ? hours : 12; // the hour '0' should be '12'
     minutes = minutes < 10 ? '0'+minutes : minutes;
     return hours + ':' + minutes + ' ' + ampm;
-}
+  }
 
-const MenuItem = props =>{
+const MenuItem = props => {
+
     const Icon = props.iconPack ?? MaterialIcons;
 
-    return (
-        <MenuOption onSelect={props.onSelect}>
-            <View style={styles.menuItemContainer}>
-                <Text style={styles.menuText}>{props.text}</Text>
-                <Icon name={props.icon} size={18} />
-            </View>
-        </MenuOption>
-    )
+    return <MenuOption onSelect={props.onSelect}>
+        <View style={styles.menuItemContainer}>
+            <Text style={styles.menuText}>{props.text}</Text>
+            <Icon name={props.icon} size={18} />
+        </View>
+    </MenuOption>
 }
 
-
 const Bubble = props => {
-    const { text, type, messageId, userId, chatId, date } = props;
+    const { text, type, messageId, chatId, userId, date, setReply, replyingTo, name } = props;
 
     const starredMessages = useSelector(state => state.messages.starredMessages[chatId] ?? {});
-    // console.log(starredMessages);
+    const storedUsers = useSelector(state => state.users.storedUsers);
 
     const bubbleStyle = { ...styles.container };
     const textStyle = { ...styles.text };
@@ -50,7 +47,7 @@ const Bubble = props => {
 
     let Container = View;
     let isUserMessage = false;
-    const dateString = formatHourseAmPm(date);
+    const dateString = date && formatAmPm(date);
 
     switch (type) {
         case "system":
@@ -77,45 +74,59 @@ const Bubble = props => {
             Container = TouchableWithoutFeedback;
             isUserMessage = true;
             break;
-    
+        case "reply":
+            bubbleStyle.backgroundColor = '#F2F2F2';
+            break;
         default:
             break;
     }
 
-    const copyToClipboard = async (text) => {
-
+    const copyToClipboard = async text => {
         try {
             await Clipboard.setStringAsync(text);
         } catch (error) {
             console.log(error);
         }
-
-    };
+    }
 
     const isStarred = isUserMessage && starredMessages[messageId] !== undefined;
+    const replyingToUser = replyingTo && storedUsers[replyingTo.sentBy];
 
     return (
         <View style={wrapperStyle}>
-            <Container 
-                onLongPress={()=>menuRef.current.props.ctx.menuActions.openMenu(id.current)} 
-                style={{width: '100%'}}>
-
+            <Container onLongPress={() => menuRef.current.props.ctx.menuActions.openMenu(id.current)} style={{ width: '100%' }}>
                 <View style={bubbleStyle}>
+
+                    {
+                        name &&
+                        <Text style={styles.name}>{name}</Text>
+                    }
+
+                    {
+                        replyingToUser &&
+                        <Bubble
+                            type='reply'
+                            text={replyingTo.text}
+                            name={`${replyingToUser.firstName} ${replyingToUser.lastName}`}
+                        />
+                    }
+
                     <Text style={textStyle}>
                         {text}
                     </Text>
 
-                    {dateString && <View style={styles.timeContainer}>
-                        {isStarred && <FontAwesome name='star' size={14} color={colors.grey} style={{marginRight: 5}}/>}
+                {
+                    dateString && <View style={styles.timeContainer}>
+                        { isStarred && <FontAwesome name='star' size={14} color={colors.textColor} style={{ marginRight: 5 }} /> }
                         <Text style={styles.time}>{dateString}</Text>
-                    </View>}
+                    </View>
+                }
 
-                    <Menu name={id.current} ref={menuRef}>
+                <Menu name={id.current} ref={menuRef}>
+                    <MenuTrigger />
 
-                        <MenuTrigger  />
-
-                        <MenuOptions>
-                            <MenuItem text='Copy to clipboard' 
+                    <MenuOptions>
+                    <MenuItem text='Copy to clipboard' 
                                 onSelect={()=>copyToClipboard(text)}
                                 icon={'content-copy'}
                             />
@@ -124,10 +135,12 @@ const Bubble = props => {
                                 icon={isStarred ? 'star-o': 'star'}
                                 iconPack={FontAwesome}
                             />
+                        <MenuItem text='Reply' icon='arrow-left-circle' onSelect={setReply} />
+                        
+                    </MenuOptions>
+                </Menu>
 
-                            
-                        </MenuOptions>
-                    </Menu>
+
                 </View>
             </Container>
         </View>
@@ -150,28 +163,31 @@ const styles = StyleSheet.create({
     text: {
         fontFamily: 'regular',
         letterSpacing: 0.3
-    }, 
+    },
     menuItemContainer: {
-        flexDirection:'row',
+        flexDirection: 'row',
         padding: 5
     },
-    menuText:{
+    menuText: {
         flex: 1,
         fontFamily: 'regular',
         letterSpacing: 0.3,
         fontSize: 16
-    }, 
+    },
     timeContainer: {
         flexDirection: 'row',
         justifyContent: 'flex-end',
         alignItems: 'center'
-    }, 
+        },
     time: {
         fontFamily: 'regular',
         letterSpacing: 0.3,
         color: colors.grey,
         fontSize: 12
-
+    },
+    name: {
+        fontFamily: 'medium',
+        letterSpacing: 0.3
     }
 })
 

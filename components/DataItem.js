@@ -14,9 +14,9 @@ const DataItem = props => {
 
             <View style={styles.textContainer}>
 
-                <Text style={styles.title}>{title}</Text>
+                <Text numberOfLines={1} style={styles.title}>{title}</Text>
 
-                <Text style={styles.subTitle}>{subTitle}</Text>
+                <Text numberOfLines={1} style={styles.subTitle}>{subTitle}</Text>
             </View>
         </View>
     </TouchableWithoutFeedback>
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderBottomColor: colors.extraLightGrey,
         borderBottomWidth: 1,
-        paddingVertical: 8,
+        paddingVertical: 7,
         minHeight: 50
     },
     textContainer: {
