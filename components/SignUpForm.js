@@ -6,7 +6,7 @@ import { Feather } from '@expo/vector-icons';
 import SubmitButton from './SubmitButton';
 import { validateInput } from '../untils/actions/formActions';
 import { reducer } from '../untils/reducers/formReducer';
-import { signUp } from '../untils/actions/authAction';
+import { signUp } from '../untils/actions/authActions';
 import { getFirebaseApp } from '../untils/firebaseHelper';
 import colors from '../constants/colors';
 import { useDispatch, useSelector } from 'react-redux';

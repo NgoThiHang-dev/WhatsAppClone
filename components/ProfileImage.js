@@ -5,7 +5,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import userImage from '../assets/images/userImage.jpg'
 import colors from '../constants/colors';
 import { launchImagePicker, uploadImageAsync } from '../untils/imagePickerHelper';
-import { updateSignedInUserData } from '../untils/actions/authAction';
+import { updateSignedInUserData } from '../untils/actions/authActions';
 import { updateLoggedInUserData } from '../store/authSlice';
 import { useDispatch } from 'react-redux';
 import { ActivityIndicator } from 'react-native';

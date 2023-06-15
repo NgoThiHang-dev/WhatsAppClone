@@ -1,139 +1,152 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Button, TextInput, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Button, TextInput, ActivityIndicator, FlatList } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../components/CustomHeaderButton';
 import PageContainer from '../components/PageContainer';
-import { AntDesign } from '@expo/vector-icons';
-import colors from '../constants/colors';
-import commonStyles from '../constants/commonStyles'
 import { FontAwesome } from '@expo/vector-icons';
-import { FontAwesome5 } from '@expo/vector-icons';
-import { searchUsers } from '../untils/actions/userAction';
+import colors from '../constants/colors';
+import commonStyles from '../constants/commonStyles';
+import { searchUsers } from '../untils/actions/userActions';
 import DataItem from '../components/DataItem';
 import { useDispatch, useSelector } from 'react-redux';
-import { setStoredUsers } from '../store/userSlide';
+import { setStoredUsers } from '../store/userSlice';
 
 const NewChatScreen = props => {
+
+    const dispatch = useDispatch();
 
     const [isLoading, setIsLoading] = useState(false);
     const [users, setUsers] = useState();
     const [noResultsFound, setNoResultsFound] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const dispatch = useDispatch();
-
     const userData = useSelector(state => state.auth.userData);
 
-    useEffect(()=>{
+    useEffect(() => {
         props.navigation.setOptions({
-            headerLeft: ()=>{
+            headerLeft: () => {
                 return <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-                    <Item title="Close" onPress={()=>props.navigation.goBack()} />
+                    <Item
+                        title="Close"
+                        onPress={() => props.navigation.goBack()}/>
                 </HeaderButtons>
             },
-            headerTitle: "New chat",
-            headerTitleAlign: 'center'
+            headerTitle: "New chat"
         })
-    }, [])
+    }, []);
 
-    useEffect(()=>{
-        const delaySearch = setTimeout(async() => {
-            if(!searchTerm || searchTerm === ''){
+    useEffect(() => {
+        const delaySearch = setTimeout(async () => {
+            if (!searchTerm || searchTerm === "") {
                 setUsers();
                 setNoResultsFound(false);
                 return;
             }
+
             setIsLoading(true);
 
-            const userResult = await searchUsers(searchTerm);
-            delete userResult[userData.userId];
+            const usersResult = await searchUsers(searchTerm);
+            delete usersResult[userData.userId];
+            setUsers(usersResult);
 
-            setUsers(userResult);
-
-            console.log('====================================');
-            console.log("userResult", userResult);
-            console.log('====================================');
-
-            if(Object.keys(userResult).length === 0){
+            if (Object.keys(usersResult).length === 0) {
                 setNoResultsFound(true);
-            }else{
+            }
+            else {
                 setNoResultsFound(false);
-                dispatch(setStoredUsers({newUsers: userResult}));
+
+                dispatch(setStoredUsers({ newUsers: usersResult }))
             }
 
             setIsLoading(false);
-
         }, 500);
 
         return () => clearTimeout(delaySearch);
+    }, [searchTerm]);
 
-    }, [searchTerm])
-
-    const userPressed = userId =>{
-        props.navigation.navigate("ChatList",{
+    const userPressed = userId => {
+        props.navigation.navigate("ChatList", {
             selectedUserId: userId
         })
     }
-
-  return (
-    <PageContainer>
+    
+    return <PageContainer>
         <View style={styles.searchContainer}>
-            <AntDesign name="search1" size={18} color={colors.lightGrey} />
-            <TextInput placeholder='Search' style={styles.searchBox} onChangeText={(text)=>setSearchTerm(text)}/>
+            <FontAwesome name="search" size={15} color={colors.lightGrey} />
+
+            <TextInput
+                placeholder='Search'
+                style={styles.searchBox}
+                onChangeText={(text) => setSearchTerm(text)}
+            />
         </View>
 
-        {isLoading && 
+        {
+            isLoading && 
             <View style={commonStyles.center}>
                 <ActivityIndicator size={'large'} color={colors.primary} />
             </View>
         }
 
-        {!isLoading && !noResultsFound && users && 
-            <FlatList data={Object.keys(users)} 
-                renderItem={(itemData)=>{
+        {
+            !isLoading && !noResultsFound && users &&
+            <FlatList
+                data={Object.keys(users)}
+                renderItem={(itemData) => {
                     const userId = itemData.item;
                     const userData = users[userId];
 
-                    console.log("userId", userId)
-
-                    return <DataItem title={`${userData.firstName} ${userData.lastName}`} 
-                        subTitle={userData.about}
-                        image={userData.profilePicture}
-                        onPress={()=>userPressed(userId)}
-                    />
+                    return <DataItem
+                                title={`${userData.firstName} ${userData.lastName}`}
+                                subTitle={userData.about}
+                                image={userData.profilePicture}
+                                onPress={() => userPressed(userId)}
+                            />
                 }}
             />
         }
 
-        {!isLoading && noResultsFound && (
-            <View style={commonStyles.center}>
-                <FontAwesome5 name="question" size={55} color={colors.lightGrey} style={styles.noResultsIcon}/>
-                <Text style={styles.noResultsText}>No users found!</Text>
-            </View>
-        )}
-        {!isLoading && !users && (
-            <View style={commonStyles.center}>
-                <FontAwesome name="users" size={55} color={colors.lightGrey} style={styles.noResultsIcon}/>
-                <Text style={styles.noResultsText}>Enter a name to search for a user!</Text>
-            </View>
-        )}
+        {
+            !isLoading && noResultsFound && (
+                <View style={commonStyles.center}>
+                    <FontAwesome
+                        name="question"
+                        size={55}
+                        color={colors.lightGrey}
+                        style={styles.noResultsIcon}/>
+                    <Text style={styles.noResultsText}>No users found!</Text>
+                </View>
+            )
+        }
+
+        {
+            !isLoading && !users && (
+                <View style={commonStyles.center}>
+                    <FontAwesome
+                        name="users"
+                        size={55}
+                        color={colors.lightGrey}
+                        style={styles.noResultsIcon}/>
+                    <Text style={styles.noResultsText}>Enter a name to search for a user!</Text>
+                </View>
+            )
+        }
+
     </PageContainer>
-    
-  )
-}
+};
 
 const styles = StyleSheet.create({
-    searchContainer:{
-       flexDirection:'row',
-       alignItems: 'center',
-       backgroundColor: colors.extraLightGrey,
-       height: 30,
-       marginVertical: 8,
-       paddingHorizontal: 5,
-       paddingVertical: 5,
-       borderRadius: 5,
+    searchContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: colors.extraLightGrey,
+        height: 30,
+        marginVertical: 8,
+        paddingHorizontal: 8,
+        paddingVertical: 5,
+        borderRadius: 5
     },
-    searchBox:{
+    searchBox: {
         marginLeft: 8,
         fontSize: 15,
         width: '100%'
@@ -146,6 +159,6 @@ const styles = StyleSheet.create({
         fontFamily: 'regular',
         letterSpacing: 0.3
     }
-  });
+})
 
-export default NewChatScreen
+export default NewChatScreen;

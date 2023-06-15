@@ -6,8 +6,7 @@ import { useEffect } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useDispatch } from 'react-redux'
 import { authenticate, setDidTryAutoLogin } from '../store/authSlice'
-import { getUserData } from '../untils/actions/userAction'
-
+import { getUserData } from '../untils/actions/userActions'
 const StartUpScreen = () => {
     const dispatch = useDispatch();
 

@@ -5,9 +5,10 @@ import { Menu, MenuTrigger, MenuOptions, MenuOption } from 'react-native-popup-m
 import uuid from 'react-native-uuid';
 import * as Clipboard from 'expo-clipboard';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Feather, FontAwesome } from '@expo/vector-icons';
+import {FontAwesome } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
-import { starMessage } from '../untils/actions/chatAction';
+import { starMessage } from '../untils/actions/chatActions';
+import { Image } from 'react-native';
 
 function formatAmPm(dateString) {
     const date = new Date(dateString);
@@ -33,7 +34,7 @@ const MenuItem = props => {
 }
 
 const Bubble = props => {
-    const { text, type, messageId, chatId, userId, date, setReply, replyingTo, name } = props;
+    const { text, type, messageId, chatId, userId, date, setReply, replyingTo, name, imageUrl } = props;
 
     const starredMessages = useSelector(state => state.messages.starredMessages[chatId] ?? {});
     const storedUsers = useSelector(state => state.users.storedUsers);
@@ -96,7 +97,6 @@ const Bubble = props => {
         <View style={wrapperStyle}>
             <Container onLongPress={() => menuRef.current.props.ctx.menuActions.openMenu(id.current)} style={{ width: '100%' }}>
                 <View style={bubbleStyle}>
-
                     {
                         name &&
                         <Text style={styles.name}>{name}</Text>
@@ -111,36 +111,40 @@ const Bubble = props => {
                         />
                     }
 
-                    <Text style={textStyle}>
-                        {text}
-                    </Text>
+                    { !imageUrl && 
+                        <Text style={textStyle}>
+                            {text}
+                        </Text>
+                    }
 
-                {
-                    dateString && <View style={styles.timeContainer}>
-                        { isStarred && <FontAwesome name='star' size={14} color={colors.textColor} style={{ marginRight: 5 }} /> }
-                        <Text style={styles.time}>{dateString}</Text>
-                    </View>
-                }
+                    {imageUrl && 
+                        <Image source={{uri: imageUrl}} style={styles.image}/>
+                    }
 
-                <Menu name={id.current} ref={menuRef}>
-                    <MenuTrigger />
+                    {
+                        dateString && <View style={styles.timeContainer}>
+                            { isStarred && <FontAwesome name='star' size={14} color={colors.textColor} style={{ marginRight: 5 }} /> }
+                            <Text style={styles.time}>{dateString}</Text>
+                        </View>
+                    }
 
-                    <MenuOptions>
-                    <MenuItem text='Copy to clipboard' 
-                                onSelect={()=>copyToClipboard(text)}
-                                icon={'content-copy'}
-                            />
-                            <MenuItem text={`${isStarred ? 'Unstar': 'Star'} message`} 
-                                onSelect={()=>starMessage(messageId, chatId, userId)}
-                                icon={isStarred ? 'star-o': 'star'}
-                                iconPack={FontAwesome}
-                            />
-                        <MenuItem text='Reply' icon='arrow-left-circle' onSelect={setReply} />
-                        
-                    </MenuOptions>
-                </Menu>
+                    <Menu name={id.current} ref={menuRef}>
+                        <MenuTrigger />
 
-
+                        <MenuOptions>
+                                <MenuItem text='Copy to clipboard' 
+                                    onSelect={()=>copyToClipboard(text)}
+                                    icon={'content-copy'}
+                                />
+                                <MenuItem text={`${isStarred ? 'Unstar': 'Star'} message`} 
+                                    onSelect={()=>starMessage(messageId, chatId, userId)}
+                                    icon={isStarred ? 'star-o': 'star'}
+                                    iconPack={FontAwesome}
+                                />
+                                <MenuItem text='Reply' icon='reply' onSelect={setReply} />
+                            
+                        </MenuOptions>
+                    </Menu>
                 </View>
             </Container>
         </View>
@@ -188,6 +192,11 @@ const styles = StyleSheet.create({
     name: {
         fontFamily: 'medium',
         letterSpacing: 0.3
+    },
+    image: {
+        marginBottom: 5,
+        width: 250,
+        height: 250
     }
 })
 

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import SettingsScreen from '../screens/SettingsScreen/SettingsScreen';
-import ChatListScreen from '../screens/ChatListScreen/ChatListScreen';
-import ChatSettingScreen from '../screens/ChatSettingScreen/ChatSettingScreen';
-import ChatScreen from '../screens/ChatScreen/ChatScreen';
+import SettingsScreen from '../screens/SettingsScreen';
+import ChatListScreen from '../screens/ChatListScreen';
+import ChatSettingScreen from '../screens/ChatSettingScreen';
+import ChatScreen from '../screens/ChatScreen';
 import NewChatScreen from '../screens/NewChatScreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,8 +14,8 @@ import { setChatsData } from '../store/chatSlice';
 import { View, ActivityIndicator } from 'react-native';
 import colors from '../constants/colors';
 import commonStyles from '../constants/commonStyles';
-import { setStoredUsers } from '../store/userSlide';
-import { setChatMessages, setStarredMessages } from '../store/messagesSlide';
+import { setChatMessages, setStarredMessages } from '../store/messagesSlice';
+import { setStoredUsers } from '../store/userSlice';
 
 
 const Stack = createNativeStackNavigator();

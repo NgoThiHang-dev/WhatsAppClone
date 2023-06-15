@@ -25,6 +25,14 @@ export const createChat = async (loggedInUserId, chatData) => {
 }
 
 export const sendTextMessage = async (chatId, senderId, messageText, replyTo) => {
+    await sendMessage(chatId, senderId, messageText, null, replyTo);
+}
+
+export const sendImage = async (chatId, senderId, imageUrl, replyTo) => {
+    await sendMessage(chatId, senderId, 'Image', imageUrl, replyTo);
+}
+
+export const sendMessage = async (chatId, senderId, messageText, imageUrl, replyTo) => {
     const app = getFirebaseApp();
     const dbRef = ref(getDatabase());
     const messagesRef = child(dbRef, `messages/${chatId}`);
@@ -39,6 +47,12 @@ export const sendTextMessage = async (chatId, senderId, messageText, replyTo) =>
         messageData.replyTo = replyTo;
     }
 
+    if (imageUrl) {
+        messageData.imageUrl = imageUrl;
+    }
+
+
+
     await push(messagesRef, messageData);
 
     const chatRef = child(dbRef, `chats/${chatId}`);
@@ -48,6 +62,7 @@ export const sendTextMessage = async (chatId, senderId, messageText, replyTo) =>
         latestMessageText: messageText
     });
 }
+
 
 export const starMessage = async (messageId, chatId, userId) => {
     try {

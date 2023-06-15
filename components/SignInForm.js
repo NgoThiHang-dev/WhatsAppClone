@@ -7,7 +7,7 @@ import SubmitButton from './SubmitButton';
 
 import { validateInput } from '../untils/actions/formActions';
 import { reducer } from '../untils/reducers/formReducer';
-import { signIn } from '../untils/actions/authAction';
+import { signIn } from '../untils/actions/authActions';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';

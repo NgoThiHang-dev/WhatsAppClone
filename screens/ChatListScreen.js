@@ -1,12 +1,11 @@
-import React from 'react';
-import { useEffect } from 'react';
-import { StyleSheet, View, Text, Button, FlatList } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, Button, FlatList } from 'react-native';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
-import CustomHeaderButton from '../../components/CustomHeaderButton';
 import { useSelector } from 'react-redux';
-import DataItem from '../../components/DataItem';
-import PageContainer from '../../components/PageContainer';
-import PageTitle from '../../components/PageTitle';
+import CustomHeaderButton from '../components/CustomHeaderButton';
+import DataItem from '../components/DataItem';
+import PageContainer from '../components/PageContainer';
+import PageTitle from '../components/PageTitle';
 
 const ChatListScreen = props => {
 
@@ -46,10 +45,6 @@ const ChatListScreen = props => {
             newChatData: { users: chatUsers }
         }
 
-        console.log('====================================');
-        console.log(navigationProps);
-        console.log('====================================');
-
         props.navigation.navigate("ChatScreen", navigationProps);
 
     }, [props.route?.params])
@@ -72,13 +67,12 @@ const ChatListScreen = props => {
                     const title = `${otherUser.firstName} ${otherUser.lastName}`;
                     const subTitle = chatData.latestMessageText || "New chat";
                     const image = otherUser.profilePicture;
-                    
+
                     return <DataItem
                                 title={title}
                                 subTitle={subTitle}
                                 image={image}
                                 onPress={() => props.navigation.navigate("ChatScreen", { chatId })}
-                                
                             />
                 }}
             />
