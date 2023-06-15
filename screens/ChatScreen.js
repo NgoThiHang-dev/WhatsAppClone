@@ -25,7 +25,9 @@ import { createChat, sendImage, sendTextMessage } from "../untils/actions/chatAc
 import ReplyTo from "../components/ReplyTo";
 import { launchImagePicker, openCamera, uploadImageAsync } from "../untils/imagePickerHelper";
 import { ActivityIndicator } from "react-native";
-
+import { HeaderButtons, Item } from "react-navigation-header-buttons";
+import CustomHeaderButton from "../components/CustomHeaderButton";
+import { Ionicons } from '@expo/vector-icons';
 
 const ChatScreen = (props) => {
   const [chatUsers, setChatUsers] = useState([]);
@@ -63,6 +65,7 @@ const ChatScreen = (props) => {
 
   const chatData = (chatId && storedChats[chatId]) || props.route?.params?.newChatData;
 
+
   const getChatTitleFromName = () => {
     const otherUserId = chatUsers.find(uid => uid !== userData.userId);
     const otherUserData = storedUsers[otherUserId];
@@ -75,6 +78,22 @@ const ChatScreen = (props) => {
   useEffect(() => {
     props.navigation.setOptions({
       headerTitle: title,
+      headerRight: ()=>{
+        return (
+          <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+            {chatId && 
+              <Item 
+                title="Chat settings"
+                iconName="settings-outline"
+                onPress={()=> chatData.isGroupChat ?
+                  props.navigation.navigate("") :
+                  props.navigation.navigate("Contact", {uid: chatUsers.find(uid => uid !== userData.userId)})
+                }
+              />
+            }
+          </HeaderButtons>
+        )
+      },
       headerTitleAlign: 'center'
     })
     setChatUsers(chatData.users)

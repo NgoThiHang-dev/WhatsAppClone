@@ -18,6 +18,7 @@ import { setChatMessages, setStarredMessages } from '../store/messagesSlice';
 import { setStoredUsers } from '../store/userSlice';
 import { KeyboardAvoidingView } from 'react-native';
 import { Platform } from 'react-native';
+import ContactScreen from '../screens/ContactScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -61,6 +62,9 @@ const StackNavigator = props => {
           />
           <Stack.Screen name="ChatSettings" component={ChatSettingScreen} 
               options={{ headerTitle: 'Settings', headerBackTitle: 'Back'}}
+          />
+          <Stack.Screen name="Contact" component={ContactScreen} 
+              options={{ headerTitle: 'Contact Information', headerBackTitle: 'Back'}}
           />
         </Stack.Group>
 
