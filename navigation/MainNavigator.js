@@ -16,6 +16,8 @@ import colors from '../constants/colors';
 import commonStyles from '../constants/commonStyles';
 import { setChatMessages, setStarredMessages } from '../store/messagesSlice';
 import { setStoredUsers } from '../store/userSlice';
+import { KeyboardAvoidingView } from 'react-native';
+import { Platform } from 'react-native';
 
 
 const Stack = createNativeStackNavigator();
@@ -169,7 +171,14 @@ const MainNavigator = (props) => {
 
 
   return (
-    <StackNavigator />
+    <KeyboardAvoidingView
+        style={{flex: 1}}
+        behavior={ Platform.OS === "ios" ? "padding" : undefined}
+        >
+
+        <StackNavigator />
+
+    </KeyboardAvoidingView>
   );
 };
 
