@@ -68,6 +68,23 @@ const ChatSettingScreen = props => {
         const currentValues = formState.inputValues;
         return currentValues.chatName != chatData.chatName;
     }
+
+    const leaveChat = useCallback(async()=>{
+        try{
+            setIsLoading(true);
+
+            // remove user
+            await removeUserFromChat(userData, userData, chatData);
+
+            props.navigation.popToPop();
+
+
+        }catch(error){
+            console.log(error);
+        }finally{
+            setIsLoading(false);
+        }
+    }, [props.navigation, isLoading])
     
     return (
         <PageContainer>
@@ -107,7 +124,8 @@ const ChatSettingScreen = props => {
                             image={currentUser.profilePicture}
                             title={`${currentUser.firstName} ${currentUser.lastName}`}
                             subTitle={currentUser.about}
-                            type={uid !== userData.userId && props.navigation.navigate("Contact", {uid})}
+                            type={uid !== userData.userId && "link"}
+                            onPress={()=>{uid !== userData.userId && props.navigation.navigate("Contact", {uid, chatId})}}
                         />
                     })}
 
@@ -126,6 +144,14 @@ const ChatSettingScreen = props => {
                 }
                 
             </ScrollView>
+
+            {<SubmitButton
+                title="Leave chat"
+                color={colors.red}
+                onPress={() => leaveChat()}
+                style={{marginBottom: 20}}
+            
+             />}
 
         </PageContainer>
     )
