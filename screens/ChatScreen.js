@@ -84,15 +84,16 @@ const ChatScreen = (props) => {
               title="Chat settings"
               iconName="settings-outline"
               onPress={() => chatData.isGroupChat ?
-                props.navigation.navigate("") :
+                props.navigation.navigate("ChatSettings", {chatId}) :
                 props.navigation.navigate("Contact", { uid: chatUsers.find(uid => uid !== userData.userId) })}
             />
           }
         </HeaderButtons>
-      }
+      },
+      headerTitleAlign: 'center'
     })
     setChatUsers(chatData.users)
-  }, [chatUsers])
+  }, [chatUsers, title])
 
   const sendMessage = useCallback(async () => {
 

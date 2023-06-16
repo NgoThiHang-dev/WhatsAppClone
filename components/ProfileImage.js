@@ -9,6 +9,7 @@ import { updateSignedInUserData } from '../utils/actions/authActions';
 import { updateLoggedInUserData } from '../store/authSlice';
 import { useDispatch } from 'react-redux';
 import { ActivityIndicator } from 'react-native';
+import { updateChatData } from '../utils/actions/chatActions';
 
 const ProfileImage = props => {
     const dispatch = useDispatch();
@@ -22,6 +23,7 @@ const ProfileImage = props => {
 
 
     const userId = props.userId;
+    const chatId = props.chatId;
 
     const pickImage = async () => {
         try {
@@ -31,18 +33,26 @@ const ProfileImage = props => {
 
             setIsLoading(true);
             // Upload the image
-            const uploadUrl = await uploadImageAsync(tempUri);
+            const uploadUrl = await uploadImageAsync(tempUri, chatId !== undefined);
             setIsLoading(false);
 
             if (!uploadUrl) {
                 throw new Error("Could not upload image");
             }
 
-            const newData = {profilePicture: uploadUrl}
-            
-            await updateSignedInUserData(userId, newData);
+           
 
-            dispatch(updateLoggedInUserData({newData}));
+            if(chatId){
+                await updateChatData(chatId, userId, {chatImage: uploadUrl}); 
+            }else{
+                const newData = {profilePicture: uploadUrl}
+            
+                await updateSignedInUserData(userId, newData);
+    
+                dispatch(updateLoggedInUserData({newData}));
+            }
+
+           
 
 
             setImage({ uri: uploadUrl });

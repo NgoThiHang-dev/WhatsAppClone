@@ -57,7 +57,8 @@ const NewChatScreen = props => {
                     }
                 </HeaderButtons>
             },
-            headerTitle: isGroupChat ? "Add participants" : "New chat"
+            headerTitle: isGroupChat ? "Add participants" : "New chat",
+            headerTitleAlign: 'center'
         })
     }, [chatName, selectedUsers]);
 
