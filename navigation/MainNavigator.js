@@ -1,83 +1,102 @@
-import React, { useEffect, useState } from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
-import SettingsScreen from '../screens/SettingsScreen';
-import ChatListScreen from '../screens/ChatListScreen';
-import ChatSettingScreen from '../screens/ChatSettingScreen';
-import ChatScreen from '../screens/ChatScreen';
-import NewChatScreen from '../screens/NewChatScreen';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useDispatch, useSelector } from 'react-redux';
-import { child, get, getDatabase, off, onValue, ref } from 'firebase/database';
-import { getFirebaseApp } from '../untils/firebaseHelper';
-import { setChatsData } from '../store/chatSlice';
-import { View, ActivityIndicator } from 'react-native';
-import colors from '../constants/colors';
-import commonStyles from '../constants/commonStyles';
-import { setChatMessages, setStarredMessages } from '../store/messagesSlice';
-import { setStoredUsers } from '../store/userSlice';
-import { KeyboardAvoidingView } from 'react-native';
-import { Platform } from 'react-native';
-import ContactScreen from '../screens/ContactScreen';
+import React, { useEffect, useState } from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
 
+
+import SettingsScreen from "../screens/SettingsScreen";
+import ChatListScreen from "../screens/ChatListScreen";
+import ChatScreen from "../screens/ChatScreen";
+import NewChatScreen from "../screens/NewChatScreen";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useDispatch, useSelector } from "react-redux";
+import { getFirebaseApp } from "../utils/firebaseHelper";
+import { child, get, getDatabase, off, onValue, ref } from "firebase/database";
+import { setChatsData } from "../store/chatSlice";
+import { ActivityIndicator, KeyboardAvoidingView, Platform, View } from "react-native";
+import colors from "../constants/colors";
+import commonStyles from "../constants/commonStyles";
+import { setStoredUsers } from "../store/userSlice";
+import { setChatMessages, setStarredMessages } from "../store/messagesSlice";
+import ContactScreen from "../screens/ContactScreen";
+import ChatSettingScreen from "../screens/ChatSettingScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-const TabNavigator = () =>{
-    return (
-      <Tab.Navigator 
-      screenOptions={{headerTitle: '', elevation: 0,
-        shadowOpacity: 0,
-        borderBottomWidth: 0, headerShadowVisible: false  }}
-      
-      >
-        <Tab.Screen name="ChatList" component={ChatListScreen} 
-          options={{
-            tabBarLabel: 'Chats', 
-            tabBarIcon: ({size, color})=>{ // cach 1: {size, color}
-              return <Ionicons name="chatbubble-outline" size={size} color={color} />
-            }
-          }}
-        />
-        <Tab.Screen name="Settings" component={SettingsScreen} 
-          options={{
-            tabBarLabel: 'Settings', 
-            tabBarIcon: (props)=>{ // cach 2: props
-              // console.log(props);
-              return <Ionicons name="ios-settings-outline" size={props.size} color={props.color} />
-            }
-          }}/>
-      </Tab.Navigator>
-    )
-  }
+const TabNavigator = () => {
+  return (
+    <Tab.Navigator screenOptions={{
+      headerTitle: "",
+      headerShadowVisible: false  
+    }}>
+      <Tab.Screen
+        name="ChatList"
+        component={ChatListScreen}
+        options={{
+          tabBarLabel: "Chats",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="chatbubble-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{
+          tabBarLabel: "Settings",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="settings-outline" size={size} color={color} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+};
 
-const StackNavigator = props => {
+const StackNavigator = () => {
   return (
     <Stack.Navigator>
-        <Stack.Group>
-          <Stack.Screen name="Home" component={TabNavigator} options={{headerShown:false}}/>
-          <Stack.Screen name="ChatScreen" component={ChatScreen} 
-              options={{headerTitle: '', headerBackTitle: 'Back'}}
-          />
-          <Stack.Screen name="ChatSettings" component={ChatSettingScreen} 
-              options={{ headerTitle: 'Settings', headerBackTitle: 'Back'}}
-          />
-          <Stack.Screen name="Contact" component={ContactScreen} 
-              options={{ headerTitle: 'Contact Information', headerBackTitle: 'Back'}}
-          />
-        </Stack.Group>
+      <Stack.Group>
+        <Stack.Screen
+          name="Home"
+          component={TabNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ChatScreen"
+          component={ChatScreen}
+          options={{
+            headerTitle: "",
+            headerBackTitle: "Back",
+          }}
+        />
+        <Stack.Screen
+          name="ChatSettings"
+          component={ChatSettingScreen}
+          options={{
+            headerTitle: "Settings",
+            headerBackTitle: "Back",
+          }}
+        />
+        <Stack.Screen
+          name="Contact"
+          component={ContactScreen}
+          options={{
+            headerTitle: "Contact info",
+            headerBackTitle: "Back",
+          }}
+        />
+      </Stack.Group>
 
-        <Stack.Group screenOptions={{presentation: 'containedModal'}}>
-          <Stack.Screen name="NewChat" component={NewChatScreen} 
-          />
-        </Stack.Group>
-        
-        
+      <Stack.Group screenOptions={{ presentation: 'containedModal' }}>
+        <Stack.Screen
+          name="NewChat"
+          component={NewChatScreen}
+        />
+      </Stack.Group>
     </Stack.Navigator>
   )
 }
-
 
 const MainNavigator = (props) => {
 
@@ -176,12 +195,9 @@ const MainNavigator = (props) => {
 
   return (
     <KeyboardAvoidingView
-        style={{flex: 1}}
-        behavior={ Platform.OS === "ios" ? "padding" : undefined}
-        >
-
-        <StackNavigator />
-
+        style={{ flex: 1 }}
+        behavior={ Platform.OS === "ios" ? "padding" : undefined}>
+      <StackNavigator />
     </KeyboardAvoidingView>
   );
 };

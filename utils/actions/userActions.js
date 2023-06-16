@@ -14,7 +14,7 @@ export const getUserData = async (userId) => {
     }
 }
 
-export const getUserChat = async (userId) => {
+export const getUserChats = async (userId) => {
     try {
         const app = getFirebaseApp();
         const dbRef = ref(getDatabase(app));

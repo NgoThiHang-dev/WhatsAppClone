@@ -4,10 +4,10 @@ import Input from './Input';
 import { FontAwesome } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import SubmitButton from './SubmitButton';
-import { validateInput } from '../untils/actions/formActions';
-import { reducer } from '../untils/reducers/formReducer';
-import { signUp } from '../untils/actions/authActions';
-import { getFirebaseApp } from '../untils/firebaseHelper';
+import { validateInput } from '../utils/actions/formActions';
+import { reducer } from '../utils/reducers/formReducer';
+import { signUp } from '../utils/actions/authActions';
+import { getFirebaseApp } from '../utils/firebaseHelper';
 import colors from '../constants/colors';
 import { useDispatch, useSelector } from 'react-redux';
 

@@ -45,32 +45,29 @@ const ChatListScreen = props => {
         let chatData;
         let navigationProps;
 
-        if(selectedUser){
-            chatData = userChats.find(cd => !cd.isGroupChat && cd.users.includes(selectedUser));
+        if (selectedUser) {
+            chatData = userChats.find(cd => !cd.isGroupChat && cd.users.includes(selectedUser))
         }
 
-        if(chatData){
-            navigationProps = {chatId: chatData.key}
-        }else{
+        if (chatData) {
+            navigationProps = { chatId: chatData.key }
+        }
+        else {
             const chatUsers = selectedUserList || [selectedUser];
-
-            if(!chatUsers.includes(userData.userId)){
+            if (!chatUsers.includes(userData.userId)){
                 chatUsers.push(userData.userId);
             }
-    
+
             navigationProps = {
-                newChatData: { 
-                    users: chatUsers , 
-                    isGroupChat: selectedUserList !== undefined
+                newChatData: {
+                    users: chatUsers,
+                    isGroupChat: selectedUserList !== undefined,
+                    chatName
                 }
             }
         }
-
-
-
-        // if(chatName){
-        //     navigationProps.chatName = chatName;
-        // }
+        
+        
 
         props.navigation.navigate("ChatScreen", navigationProps);
 
@@ -79,8 +76,9 @@ const ChatListScreen = props => {
     return <PageContainer>
 
         <PageTitle text="Chats" />
+
             <View>
-                <TouchableOpacity onPress={() => props.navigation.navigate("NewChat", {isGroupChat: true})}>
+                <TouchableOpacity onPress={() => props.navigation.navigate("NewChat", { isGroupChat: true })}>
                     <Text style={styles.newGroupText}>New Group</Text>
                 </TouchableOpacity>
             </View>
@@ -96,9 +94,10 @@ const ChatListScreen = props => {
                     const subTitle = chatData.latestMessageText || "New chat";
                     let image = "";
 
-                    if(isGroupChat){
-                        title = chatData.chatName;
-                    }else{
+                    if (isGroupChat) {
+                        title = chatData.chatName;  
+                    }
+                    else {
                         const otherUserId = chatData.users.find(uid => uid !== userData.userId);
                         const otherUser = storedUsers[otherUserId];
 
@@ -107,8 +106,6 @@ const ChatListScreen = props => {
                         title = `${otherUser.firstName} ${otherUser.lastName}`;
                         image = otherUser.profilePicture;
                     }
-
-                    
 
                     return <DataItem
                                 title={title}

@@ -10,24 +10,23 @@ import {
   KeyboardAvoidingView,
   Platform,
   FlatList,
-  Image
+  Image,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
-import { useSelector } from "react-redux";
-import AwesomeAlert from "react-native-awesome-alerts";
 
 import backgroundImage from "../assets/images/background-whatapp.jpg";
 import colors from "../constants/colors";
+import { useSelector } from "react-redux";
 import PageContainer from "../components/PageContainer";
 import Bubble from "../components/Bubble";
-import { createChat, sendImage, sendTextMessage } from "../untils/actions/chatActions";
+import { createChat, sendImage, sendTextMessage } from "../utils/actions/chatActions";
 import ReplyTo from "../components/ReplyTo";
-import { launchImagePicker, openCamera, uploadImageAsync } from "../untils/imagePickerHelper";
-import { ActivityIndicator } from "react-native";
+import { launchImagePicker, openCamera, uploadImageAsync } from "../utils/imagePickerHelper";
+import AwesomeAlert from 'react-native-awesome-alerts';
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import CustomHeaderButton from "../components/CustomHeaderButton";
-import { Ionicons } from '@expo/vector-icons';
 
 const ChatScreen = (props) => {
   const [chatUsers, setChatUsers] = useState([]);
@@ -65,7 +64,6 @@ const ChatScreen = (props) => {
 
   const chatData = (chatId && storedChats[chatId]) || props.route?.params?.newChatData;
 
-
   const getChatTitleFromName = () => {
     const otherUserId = chatUsers.find(uid => uid !== userData.userId);
     const otherUserData = storedUsers[otherUserId];
@@ -78,23 +76,20 @@ const ChatScreen = (props) => {
   useEffect(() => {
     props.navigation.setOptions({
       headerTitle: title,
-      headerRight: ()=>{
-        return (
-          <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
-            {chatId && 
-              <Item 
-                title="Chat settings"
-                iconName="settings-outline"
-                onPress={()=> chatData.isGroupChat ?
-                  props.navigation.navigate("") :
-                  props.navigation.navigate("Contact", {uid: chatUsers.find(uid => uid !== userData.userId)})
-                }
-              />
-            }
-          </HeaderButtons>
-        )
-      },
-      headerTitleAlign: 'center'
+      headerRight: () => {
+        return <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+          {
+            chatId && 
+            <Item
+              title="Chat settings"
+              iconName="settings-outline"
+              onPress={() => chatData.isGroupChat ?
+                props.navigation.navigate("") :
+                props.navigation.navigate("Contact", { uid: chatUsers.find(uid => uid !== userData.userId) })}
+            />
+          }
+        </HeaderButtons>
+      }
     })
     setChatUsers(chatData.users)
   }, [chatUsers])
@@ -113,9 +108,6 @@ const ChatScreen = (props) => {
 
       setMessageText("");
       setReplyingTo(null);
-      setTimeout(() =>setTempImageUri(""), 500);
-
-
     } catch (error) {
       console.log(error);
       setErrorBannerText("Message failed to send");
@@ -124,28 +116,31 @@ const ChatScreen = (props) => {
   }, [messageText, chatId]);
 
 
-  const pickImage = useCallback(async() =>{
-    try{
+  const pickImage = useCallback(async () => {
+    try {
       const tempUri = await launchImagePicker();
-      if(!tempUri) return;
+      if (!tempUri) return;
+
       setTempImageUri(tempUri);
-    }catch(error){
-
+    } catch (error) {
+      console.log(error);
     }
-  }, [tempImageUri])
+  }, [tempImageUri]);
 
-  const takePhoto = useCallback(async() =>{
-    try{
+  const takePhoto = useCallback(async () => {
+    try {
       const tempUri = await openCamera();
-      if(!tempUri) return;
+      if (!tempUri) return;
+
       setTempImageUri(tempUri);
-    }catch(error){
-
+    } catch (error) {
+      console.log(error);
     }
-  }, [tempImageUri])
+  }, [tempImageUri]);
 
-  const uploadImage = useCallback(async()=>{
+  const uploadImage = useCallback(async () => {
     setIsLoading(true);
+
     try {
 
       let id = chatId;
@@ -158,21 +153,20 @@ const ChatScreen = (props) => {
       const uploadUrl = await uploadImageAsync(tempImageUri, true);
       setIsLoading(false);
 
-      //Send Image
-      await sendImage(id, userData.userId, uploadUrl, replyingTo && replyingTo.key);
-
+      await sendImage(id, userData.userId, uploadUrl, replyingTo && replyingTo.key)
       setReplyingTo(null);
-      setTempImageUri("");
-
+      
+      setTimeout(() => setTempImageUri(""), 500);
+      
     } catch (error) {
       console.log(error);
-      setIsLoading(false);
+      
     }
   }, [isLoading, tempImageUri, chatId])
 
   return (
     <SafeAreaView edges={["right", "left", "bottom"]} style={styles.container}>
-     
+      
         <ImageBackground
           source={backgroundImage}
           style={styles.backgroundImage}
@@ -190,9 +184,9 @@ const ChatScreen = (props) => {
             {
               chatId && 
               <FlatList
-                ref={(ref)=>flatList.current = ref}
-                onContentSizeChange={()=>flatList.current.scrollToEnd({animated: false})}
-                onLayout={()=>flatList.current.scrollToEnd({animated: false})}
+                ref={(ref) => flatList.current = ref}
+                onContentSizeChange={() => flatList.current.scrollToEnd({ animated: false })}
+                onLayout={() => flatList.current.scrollToEnd({ animated: false })}
                 data={chatMessages}
                 renderItem={(itemData) => {
                   const message = itemData.item;
@@ -200,8 +194,9 @@ const ChatScreen = (props) => {
                   const isOwnMessage = message.sentBy === userData.userId;
 
                   const messageType = isOwnMessage ? "myMessage" : "theirMessage";
+
                   const sender = message.sentBy && storedUsers[message.sentBy];
-                  const name = sender && `${sender.firstName} ${sender.lastName}`
+                  const name = sender && `${sender.firstName} ${sender.lastName}`;
 
                   return <Bubble
                             type={messageType}
@@ -266,32 +261,34 @@ const ChatScreen = (props) => {
             </TouchableOpacity>
           )}
 
-          <AwesomeAlert 
-            show={tempImageUri !== ""}
-            title="Send image"
-            closeOnTouchOutside={true}
-            closeOnHardwareBackPress={false}
-            showCancelButton={true}
-            showConfirmButton={true}
-            cancelText="Cancel"
-            confirmText="Send image"
-            confirmButtonColor={colors.primary}
-            cancelButtonColor={colors.red}
-            titleStyle={styles.popupTitleStyle}
-            onCancelPressed={()=>setTempImageUri("")}
-            onConfirmPressed={uploadImage}
-            onDismiss={()=>setTempImageUri("")}
-            customView={(
-              <View>
-              {isLoading && <ActivityIndicator size='small' color={colors.primary} />}
-
-
-              {!isLoading &&tempImageUri !== "" && 
-                <Image source={{uri: tempImageUri}} style={{width: 200, height: 200}}/>}
-              </View>
-            )}
-          />
-
+            <AwesomeAlert
+              show={tempImageUri !== ""}
+              title='Send image?'
+              closeOnTouchOutside={true}
+              closeOnHardwareBackPress={false}
+              showCancelButton={true}
+              showConfirmButton={true}
+              cancelText='Cancel'
+              confirmText="Send image"
+              confirmButtonColor={colors.primary}
+              cancelButtonColor={colors.red}
+              titleStyle={styles.popupTitleStyle}
+              onCancelPressed={() => setTempImageUri("")}
+              onConfirmPressed={uploadImage}
+              onDismiss={() => setTempImageUri("")}
+              customView={(
+                <View>
+                  {
+                    isLoading &&
+                    <ActivityIndicator size='small' color={colors.primary} />
+                  }
+                  {
+                    !isLoading && tempImageUri !== "" &&
+                    <Image source={{ uri: tempImageUri }} style={{ width: 200, height: 200 }} />
+                  }
+                </View>
+              )}
+            />
 
 
         </View>
@@ -334,10 +331,10 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     padding: 8,
   },
-  popupTitleStyle:{
+  popupTitleStyle: {
     fontFamily: 'medium',
     letterSpacing: 0.3,
-    color: colors.textColor,
+    color: colors.textColor
   }
 });
 

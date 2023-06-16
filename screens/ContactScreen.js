@@ -6,7 +6,7 @@ import PageContainer from '../components/PageContainer';
 import PageTitle from '../components/PageTitle';
 import ProfileImage from '../components/ProfileImage';
 import colors from '../constants/colors';
-import getUserChats from '../untils/actions/userActions'
+import { getUserChats } from '../utils/actions/userActions';
 
 const ContactScreen = props => {
     const storedUsers = useSelector(state => state.users.storedUsers);
@@ -54,6 +54,8 @@ const ContactScreen = props => {
                                key={cid} 
                                title={chatData.chatName}
                                subTitle={chatData.latestMessageText}
+                               type="link"
+                               onPress={() => props.navigation.push("ChatScreen", { chatId: cid })}
                             />
                     })
                 }

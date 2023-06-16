@@ -6,7 +6,7 @@ import PageContainer from '../components/PageContainer';
 import { FontAwesome } from '@expo/vector-icons';
 import colors from '../constants/colors';
 import commonStyles from '../constants/commonStyles';
-import { searchUsers } from '../untils/actions/userActions';
+import { searchUsers } from '../utils/actions/userActions';
 import DataItem from '../components/DataItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { setStoredUsers } from '../store/userSlice';
@@ -117,7 +117,7 @@ const NewChatScreen = props => {
                                 style={styles.textbox}
                                 placeholder="Enter a name for your chat"
                                 autoCorrect={false}
-                                autoComplete="off"
+                                autoComplete={false}
                                 onChangeText={text => setChatName(text)}
                             />
                         </View>

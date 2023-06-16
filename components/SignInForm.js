@@ -5,9 +5,9 @@ import { FontAwesome } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import SubmitButton from './SubmitButton';
 
-import { validateInput } from '../untils/actions/formActions';
-import { reducer } from '../untils/reducers/formReducer';
-import { signIn } from '../untils/actions/authActions';
+import { validateInput } from '../utils/actions/formActions';
+import { reducer } from '../utils/reducers/formReducer';
+import { signIn } from '../utils/actions/authActions';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';

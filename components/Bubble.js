@@ -7,7 +7,7 @@ import * as Clipboard from 'expo-clipboard';
 import { MaterialIcons } from '@expo/vector-icons';
 import {FontAwesome } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
-import { starMessage } from '../untils/actions/chatActions';
+import { starMessage } from '../utils/actions/chatActions';
 import { Image } from 'react-native';
 
 function formatAmPm(dateString) {
