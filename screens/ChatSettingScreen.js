@@ -31,6 +31,10 @@ const ChatSettingsScreen = (props) => {
   const userData = useSelector((state) => state.auth.userData);
   const storedUsers = useSelector((state) => state.users.storedUsers);
 
+  const starredMessages = useSelector(
+    (state) => state.messages.starredMessages[chatId] ?? {}
+  );
+
   const initialState = {
     inputValues: { chatName: chatData.chatName },
     inputValidities: { chatName: undefined },
@@ -197,6 +201,19 @@ const ChatSettingsScreen = (props) => {
             />
           )
         )}
+
+        <DataItem
+          type={"link"}
+          title="Starred messages"
+          hideImage={true}
+          onPress={() =>
+            props.navigation.navigate("DataList", {
+              title: "Starred messages",
+              data: Object.values(starredMessages),
+              type: "messages",
+            })
+          }
+        />
       </ScrollView>
 
       {

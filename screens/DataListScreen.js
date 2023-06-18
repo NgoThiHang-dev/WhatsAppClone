@@ -1,27 +1,25 @@
 import React, { useEffect } from "react";
-import { Text, FlatList } from "react-native";
+import { FlatList, Text } from "react-native";
 import { useSelector } from "react-redux";
-import PageContainer from "../components/PageContainer";
 import DataItem from "../components/DataItem";
+import PageContainer from "../components/PageContainer";
 
 const DataListScreen = (props) => {
   const storedUsers = useSelector((state) => state.users.storedUsers);
   const userData = useSelector((state) => state.auth.userData);
+  const messagesData = useSelector((state) => state.messages.messagesData);
 
   const { title, data, type, chatId } = props.route.params;
 
   useEffect(() => {
-    props.navigation.setOptions({
-      headerTitle: title,
-      headerTitleAlign: "center",
-    });
+    props.navigation.setOptions({ headerTitle: title });
   }, [title]);
 
   return (
     <PageContainer>
       <FlatList
         data={data}
-        keyExtractor={(item) => item}
+        keyExtractor={(item) => item.messageId || item}
         renderItem={(itemData) => {
           let key, onPress, image, title, subTitle, itemType;
 
@@ -41,6 +39,25 @@ const DataListScreen = (props) => {
             onPress = isLoggedInUser
               ? undefined
               : () => props.navigation.navigate("Contact", { uid, chatId });
+          } else if (type === "messages") {
+            const starData = itemData.item;
+            const { chatId, messageId } = starData;
+            const messagesForChat = messagesData[chatId];
+
+            if (!messagesForChat) {
+              return;
+            }
+
+            const messageData = messagesForChat[messageId];
+            const sender =
+              messageData.sentBy && storedUsers[messageData.sentBy];
+            const name = sender && `${sender.firstName} ${sender.lastName}`;
+
+            key = messageId;
+            title = name;
+            subTitle = messageData.text;
+            itemType = "";
+            onPress = () => {};
           }
 
           return (
@@ -50,7 +67,7 @@ const DataListScreen = (props) => {
               image={image}
               title={title}
               subTitle={subTitle}
-              itemType={itemType}
+              type={itemType}
             />
           );
         }}
