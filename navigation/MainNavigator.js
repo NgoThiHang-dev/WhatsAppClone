@@ -94,7 +94,6 @@ const StackNavigator = () => {
             headerBackTitle: "Back",
           }}
         />
-
         <Stack.Screen
           name="DataList"
           component={DataListScreen}

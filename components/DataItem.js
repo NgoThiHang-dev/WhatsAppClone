@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, TouchableWithoutFeedback } from "react-native";
+import { StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
 import colors from "../constants/colors";
 import ProfileImage from "./ProfileImage";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
@@ -8,12 +8,14 @@ const imageSize = 40;
 
 const DataItem = (props) => {
   const { title, subTitle, image, type, isChecked, icon } = props;
-  const hiddenImage = props.hiddenImage && props.hiddenImage === true;
+
+  const hideImage = props.hideImage && props.hideImage === true;
 
   return (
     <TouchableWithoutFeedback onPress={props.onPress}>
       <View style={styles.container}>
-        {!icon && !hiddenImage && <ProfileImage uri={image} size={imageSize} />}
+        {!icon && !hideImage && <ProfileImage uri={image} size={imageSize} />}
+
         {icon && (
           <View style={styles.leftIconContainer}>
             <AntDesign name={icon} size={20} color={colors.blue} />
@@ -27,7 +29,6 @@ const DataItem = (props) => {
               ...styles.title,
               ...{ color: type === "button" ? colors.blue : colors.textColor },
             }}
-            // color={type === "button" ? colors.blue : colors.textColor}
           >
             {title}
           </Text>
@@ -49,6 +50,16 @@ const DataItem = (props) => {
             <Ionicons name="checkmark" size={18} color="white" />
           </View>
         )}
+
+        {type === "link" && (
+          <View>
+            <Ionicons
+              name="chevron-forward-outline"
+              size={18}
+              color={colors.grey}
+            />
+          </View>
+        )}
       </View>
     </TouchableWithoutFeedback>
   );
@@ -57,10 +68,10 @@ const DataItem = (props) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    alignItems: "center",
+    paddingVertical: 7,
     borderBottomColor: colors.extraLightGrey,
     borderBottomWidth: 1,
-    paddingVertical: 7,
+    alignItems: "center",
     minHeight: 50,
   },
   textContainer: {

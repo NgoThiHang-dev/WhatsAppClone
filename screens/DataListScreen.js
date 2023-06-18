@@ -5,10 +5,10 @@ import PageContainer from "../components/PageContainer";
 import DataItem from "../components/DataItem";
 
 const DataListScreen = (props) => {
-  const { title, data, type, chatId } = props.route.params;
-
   const storedUsers = useSelector((state) => state.users.storedUsers);
   const userData = useSelector((state) => state.auth.userData);
+
+  const { title, data, type, chatId } = props.route.params;
 
   useEffect(() => {
     props.navigation.setOptions({
@@ -40,7 +40,7 @@ const DataListScreen = (props) => {
             itemType = isLoggedInUser ? undefined : "link";
             onPress = isLoggedInUser
               ? undefined
-              : props.navigation.navigate("Contact", { uid, chatId });
+              : () => props.navigation.navigate("Contact", { uid, chatId });
           }
 
           return (
