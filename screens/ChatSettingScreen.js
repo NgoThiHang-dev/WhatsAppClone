@@ -22,7 +22,7 @@ import {
 import { validateInput } from "../utils/actions/formActions";
 import { reducer } from "../utils/reducers/formReducer";
 
-const ChatSettingsScreen = (props) => {
+const ChatSettingScreen = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
@@ -250,4 +250,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatSettingsScreen;
+export default ChatSettingScreen;
