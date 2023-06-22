@@ -13,6 +13,7 @@ import colors from './constants/colors';
 import { MenuProvider } from 'react-native-popup-menu';
 
 LogBox.ignoreLogs(['AsyncStorage has been extracted']);
+
 // AsyncStorage.clear();
 
 SplashScreen.preventAutoHideAsync();
@@ -60,13 +61,9 @@ export default function App() {
   return (
     <Provider store={store}>
       <SafeAreaProvider style={styles.container} onLayout={onLayoutView}>
-
         <MenuProvider>
-
-          <AppNavigator />
-
+          <AppNavigator/>
         </MenuProvider>
-
       </SafeAreaProvider>
     </Provider>
    
@@ -75,7 +72,7 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     backgroundColor: colors.white,
   },
   text1:{

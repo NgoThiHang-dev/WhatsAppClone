@@ -1,13 +1,12 @@
 import React from 'react';
-import { StyleSheet, View, Text, TextInput } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Dimensions  } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import colors from '../constants/colors';
 import { useState } from 'react';
 // import { FontAwesome } from '@expo/vector-icons';
 
-const Input = props => {
+const Input = React.forwardRef((props, ref) => {
     const [value, setValue] = useState(props.initialValue);
-
 
     const onChangeText = text => {
         setValue(text);
@@ -23,7 +22,9 @@ const Input = props => {
                 <TextInput {...props} 
                 style={styles.input} 
                 onChangeText={onChangeText} 
-                value={value}/>
+                value={value}
+                ref={ref}  
+                />
             </View>
             {props.errorText && (
                 <View style={styles.errorContainer}>
@@ -33,12 +34,12 @@ const Input = props => {
             
         </View>
     )
-};
+});
 
 const styles = StyleSheet.create({
     container:{
         width: '100%',
-
+        // flex:1,
     },
     label:{
         marginVertical: 8,
@@ -51,9 +52,9 @@ const styles = StyleSheet.create({
         backgroundColor: colors.nearlyWhite,
         border: 1,
         borderColor: colors.lightGrey,
-        borderRadius: 2,
+        borderRadius: 4,
         paddingHorizontal: 10,
-        paddingVertical: 15,
+        paddingVertical: 12,
         flexDirection: 'row',
         alignItems: 'center'
     },
@@ -66,7 +67,11 @@ const styles = StyleSheet.create({
         flex: 1,
         fontFamily: 'regular',
         letterSpacing: 0.3,
-        paddingTop: 0
+        paddingTop: 0,
+        // borderColor: colors.primary,
+        // outlineStyle: 'solid',
+        // outlineWidth: 1,
+        width: "100%",
     },
     errorContainer: {
         marginVertical: 5,

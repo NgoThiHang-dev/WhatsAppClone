@@ -1,5 +1,5 @@
-import React, { useCallback, useReducer } from 'react'
-import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
+import React, { useCallback, useReducer, useRef, forwardRef } from 'react'
+import { StyleSheet, View, Text, ActivityIndicator, Dimensions } from 'react-native';
 import Input from './Input';
 import { FontAwesome } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
@@ -27,10 +27,15 @@ const initialState = {
     formIsValid: isTestMode
 }
 
-const SignInForm = props => {
+const SignInForm = forwardRef((props, ref) => {
     const [formState, dispatchFormState] = useReducer(reducer, initialState);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState();
+
+
+    const usernameInputRef = useRef(null);
+    const passwordInputRef = useRef(null);
+
 
     const dispatch = useDispatch();
 
@@ -40,6 +45,17 @@ const SignInForm = props => {
     }, [dispatchFormState])
 
 
+    const handleUsernameEndEditing = () => {
+        passwordInputRef.current.focus();
+    };
+    
+    const handlePasswordEndEditing = () => {
+        authHandler();
+    };
+
+    useEffect(() => {
+        usernameInputRef.current.focus();
+    }, []);
 
     useEffect(()=>{
         if(error){
@@ -65,8 +81,14 @@ const SignInForm = props => {
         }
     }, [dispatch, formState])
 
+    
+
     return (
-        <View>
+        <View style={{width: '100%', flex: 1}}>
+            <Text style={styles.welcomeLogin}>Welcome Back!</Text>
+            <Text style={styles.subTitleLogin}>Please Log into your existing account</Text>
+
+
             <Input label="Email" 
                 id="email"
                 autoCapitalize="none"
@@ -77,6 +99,9 @@ const SignInForm = props => {
                 onInputChanged={inputChangedHandler}
                 initialValue={formState.inputValues.email}
                 errorText={formState.inputValidities['email']}
+                ref={usernameInputRef}
+                returnKeyType="next"
+                onSubmitEditing={handleUsernameEndEditing}
             />
             <Input label="Password"
                 id="password"
@@ -88,10 +113,14 @@ const SignInForm = props => {
                 onInputChanged={inputChangedHandler}
                 initialValue={formState.inputValues.password}
                 errorText={formState.inputValidities['password']}
+                onEndEditing={handlePasswordEndEditing}
+                ref={passwordInputRef}
+                returnKeyType="done"
+                onSubmitEditing={authHandler}
             />
             {isLoading ? <ActivityIndicator size={'small'} color={colors.primary} style={{marginTop: 10}} /> :
                 <SubmitButton title="Sign in" 
-                    onPress={authHandler} 
+                    onSubmitEditing={authHandler} 
                     style={styles.marginTop20}
                     disabled={!formState.formIsValid}
                 />
@@ -99,10 +128,29 @@ const SignInForm = props => {
             
         </View>
   )
-}
+})
 const styles = StyleSheet.create({
+
+    welcomeLogin: {
+        fontFamily: 'bold',
+        fontSize: 20,
+        letterSpacing: 0.3,
+        textAlign: 'center',
+        marginVertical: 20
+    },
+
+
+    subTitleLogin:{
+        fontFamily: 'regular',
+        fontSize: 16,
+        letterSpacing: 0.3,
+        textAlign: 'center',
+        marginBottom: 20,
+        color: '#ABACB0'
+    },
+
     marginTop20: {
-        marginTop: 20
+        marginTop: 20,
     }
 });
 

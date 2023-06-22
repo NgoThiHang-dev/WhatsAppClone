@@ -1,7 +1,7 @@
 import { child, get, getDatabase, push, ref, remove, set, update } from "firebase/database";
 import { getFirebaseApp } from "../firebaseHelper";
 import { getUserPushTokens } from "./authActions";
-import { addUserChat, deleteUserChat, getUserChats } from "./userActions";
+import { addUserChats, deleteUserChats, getUserChats } from "./userActions";
 
 export const createChat = async (loggedInUserId, chatData) => {
 
@@ -127,7 +127,7 @@ export const removeUserFromChat = async (userLoggedInData, userToRemoveData, cha
         const currentChatId = userChats[key];
 
         if (currentChatId === chatData.key) {
-            await deleteUserChat(userToRemoveId, key);
+            await deleteUserChats(userToRemoveId, key);
             break;
         }
     }
@@ -145,14 +145,14 @@ export const addUsersToChat = async (userLoggedInData, usersToAddData, chatData)
 
     let userAddedName = "";
 
-    usersToAddData.forEach(async userToAdd => {
+    usersToAddData.forEach(async (userToAdd) => {
         const userToAddId = userToAdd.userId;
 
         if (existingUsers.includes(userToAddId)) return;
 
         newUsers.push(userToAddId);
 
-        await addUserChat(userToAddId, chatData.key);
+        await addUserChats(userToAddId, chatData.key);
 
         userAddedName = `${userToAdd.firstName} ${userToAdd.lastName}`;
     });

@@ -117,6 +117,9 @@ const Bubble = (props) => {
   const isStarred = isUserMessage && starredMessages[messageId] !== undefined;
   const replyingToUser = replyingTo && storedUsers[replyingTo.sentBy];
 
+  const widthImage = 200;
+  const heightImage = 200;
+
   return (
     <View style={wrapperStyle}>
       <Container
@@ -139,7 +142,10 @@ const Bubble = (props) => {
           {!imageUrl && <Text style={textStyle}>{text}</Text>}
 
           {imageUrl && (
-            <Image source={{ uri: imageUrl }} style={styles.image} />
+            <Image source={{ uri: imageUrl }} 
+            style={{width: widthImage, height: heightImage}} 
+
+            />
           )}
 
           {dateString && type !== "info" && (
@@ -222,11 +228,11 @@ const styles = StyleSheet.create({
     fontFamily: "medium",
     letterSpacing: 0.3,
   },
-  image: {
-    marginBottom: 5,
-    width: 250,
-    height: 250,
-  },
+  // image: {
+  //   marginBottom: 5,
+  //   width: 250,
+  //   height: 250,
+  // },
 });
 
 export default Bubble;

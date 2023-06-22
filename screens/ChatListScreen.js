@@ -32,6 +32,10 @@ const ChatListScreen = props => {
                         iconName="create-outline"
                         onPress={() => props.navigation.navigate("NewChat")}/>
                 </HeaderButtons>
+            },
+
+            headerLeft: () => {
+                return <Text style={styles.titleChats}>Chats</Text>
             }
         })
     }, []);
@@ -74,10 +78,10 @@ const ChatListScreen = props => {
     }, [props.route?.params])
     
     return <PageContainer>
+{/* text="Chats" */}
+        <PageTitle  />
 
-        <PageTitle text="Chats" />
-
-            <View>
+            <View style={styles.newGroup}>
                 <TouchableOpacity onPress={() => props.navigation.navigate("NewChat", { isGroupChat: true })}>
                     <Text style={styles.newGroupText}>New Group</Text>
                 </TouchableOpacity>
@@ -125,10 +129,20 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
+    newGroup:{
+        marginBottom: 10,
+    },
     newGroupText: {
         color: colors.blue,
         fontSize: 17,
         marginBottom: 5
+    },
+    titleChats: {
+        fontSize: 24,
+        fontFamily:'bold',
+        letterSpacing: 0.3,
+        paddingLeft: 20
+
     }
 })
 

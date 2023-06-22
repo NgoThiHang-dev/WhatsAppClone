@@ -178,6 +178,9 @@ const ChatScreen = (props) => {
     }
   }, [isLoading, tempImageUri, chatId]);
 
+  const widthImage = 200;
+  const heightImage = 200;
+
   return (
     <SafeAreaView edges={["right", "left", "bottom"]} style={styles.container}>
       <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
@@ -301,7 +304,7 @@ const ChatScreen = (props) => {
               {!isLoading && tempImageUri !== "" && (
                 <Image
                   source={{ uri: tempImageUri }}
-                  style={{ width: 200, height: 200 }}
+                  style={{width: widthImage, height: heightImage}}
                 />
               )}
             </View>

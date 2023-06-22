@@ -20,13 +20,33 @@ const SubmitButton = props => {
 }
 const styles = StyleSheet.create({
     button:{
-        backgroundColor: colors.primary,
-        paddingVertical: 10,
-        paddingHorizontal: 30,
-        borderRadius: 30,
-        justifyContent: 'center',
-        alignItems: 'center',
-    }
+      backgroundColor: colors.primary,
+      paddingVertical: 10,
+      paddingHorizontal: 30,
+      borderRadius: 4,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+
+    welcomeLogin: {
+      fontFamily: 'bold',
+      fontSize: 20,
+      // color: colors.white,
+      letterSpacing: 0.3,
+      textAlign: 'center',
+      marginVertical: 20
+    },
+
+
+    subTitleLogin:{
+      fontFamily: 'regular',
+      fontSize: 16,
+      // color: colors.white,
+      letterSpacing: 0.3,
+      textAlign: 'center',
+      marginBottom: 20,
+      color: '#ABACB0'
+    },
 });
 
 export default SubmitButton

@@ -22,23 +22,35 @@ import { setChatMessages, setStarredMessages } from "../store/messagesSlice";
 import ContactScreen from "../screens/ContactScreen";
 import DataListScreen from "../screens/DataListScreen";
 import { StackActions, useNavigation } from '@react-navigation/native';
+// import ChatWeb from '../screens/ChatWeb';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
   return (
-    <Tab.Navigator screenOptions={{
-      headerTitle: "",
-      headerShadowVisible: false  
-    }}>
+    <Tab.Navigator 
+      screenOptions={{
+        headerTitle: "",
+        headerShadowVisible: false,
+        tabBarActiveTintColor: '#32d48e', // Màu sắc khi được chọn
+        tabBarInactiveTintColor: 'grey', // Màu sắc khi không được chọn
+        tabBarOptions: {
+          style: {
+            borderTopWidth: 0, // Bỏ đường kẻ phía trên
+            elevation: 0, // Bỏ shadow
+          },
+        },
+      }}
+     
+    >
       <Tab.Screen
         name="ChatList"
         component={ChatListScreen}
         options={{
           tabBarLabel: "Chats",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="chatbubble-outline" size={size} color={color} />
+            <Ionicons name="chatbubble-outline" size={size} color={color} style={{ color: color }}/>
           ),
         }}
       />
@@ -47,8 +59,9 @@ const TabNavigator = () => {
         component={SettingsScreen}
         options={{
           tabBarLabel: "Settings",
+          headerShown: false, // Không hiển thị header,
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings-outline" size={size} color={color} />
+            <Ionicons name="settings-outline" size={size} color={color} style={{ color: color }}/>
           ),
         }}
       />
@@ -109,6 +122,9 @@ const StackNavigator = () => {
     </Stack.Navigator>
   )
 }
+
+// const isWeb = Platform.OS === 'web';
+// const isMobile = Platform.OS === 'android' || Platform.OS === 'ios';
 
 const MainNavigator = (props) => {
 
@@ -246,7 +262,10 @@ const MainNavigator = (props) => {
     <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={ Platform.OS === "ios" ? "padding" : undefined}>
-      <StackNavigator />
+
+       
+
+        <StackNavigator />
     </KeyboardAvoidingView>
   );
 };
@@ -273,7 +292,7 @@ async function registerForPushNotificationsAsync() {
       finalStatus = status;
     }
     if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
+      console.log('Failed to get push token for push notification!');
       return;
     }
     token = (await Notifications.getExpoPushTokenAsync()).data;

@@ -112,115 +112,138 @@ const SettingsScreen = (props) => {
   };
 
   return (
-    <PageContainer>
-      <PageTitle title="Settings" />
+    <PageContainer style={styles.customSetting}>
+      {/* <PageTitle title="Settings" /> */}
 
       <ScrollView contentContainerStyle={styles.formContainer}>
-        <ProfileImage
-          size={80}
-          userId={userData.userId}
-          uri={userData.profilePicture}
-          showEditButton={true}
-        />
+        <View style={styles.stySetting}>
+          <ProfileImage
+            size={80}
+            userId={userData.userId}
+            uri={userData.profilePicture}
+            showEditButton={true}
+          />
 
-        <Input
-          label="First name"
-          icon="user-o"
-          id="firstName"
-          autoCapitalize="none"
-          iconPack={FontAwesome}
-          iconSize={15}
-          onInputChanged={inputChangedHandler}
-          errorText={formState.inputValidities["firstName"]}
-          initialValue={userData.firstName}
-        />
-        <Input
-          label="Last name"
-          icon="user-o"
-          id="lastName"
-          autoCapitalize="none"
-          iconPack={FontAwesome}
-          iconSize={15}
-          onInputChanged={inputChangedHandler}
-          errorText={formState.inputValidities["lastName"]}
-          initialValue={userData.lastName}
-        />
-        <Input
-          label="Email"
-          icon="mail"
-          id="email"
-          autoCapitalize="none"
-          keyboardType="email-address"
-          iconPack={Feather}
-          iconSize={15}
-          onInputChanged={inputChangedHandler}
-          errorText={formState.inputValidities["email"]}
-          initialValue={userData.email}
-        />
-        <Input
-          label="About"
-          icon="user-o"
-          id="about"
-          autoCapitalize="none"
-          iconPack={FontAwesome}
-          iconSize={15}
-          onInputChanged={inputChangedHandler}
-          errorText={formState.inputValidities["about"]}
-          initialValue={userData.about}
-        />
+          <Input
+            label="First name"
+            icon="user-o"
+            id="firstName"
+            autoCapitalize="none"
+            iconPack={FontAwesome}
+            iconSize={15}
+            onInputChanged={inputChangedHandler}
+            errorText={formState.inputValidities["firstName"]}
+            initialValue={userData.firstName}
+          />
+          <Input
+            label="Last name"
+            icon="user-o"
+            id="lastName"
+            autoCapitalize="none"
+            iconPack={FontAwesome}
+            iconSize={15}
+            onInputChanged={inputChangedHandler}
+            errorText={formState.inputValidities["lastName"]}
+            initialValue={userData.lastName}
+          />
+          <Input
+            label="Email"
+            icon="mail"
+            id="email"
+            autoCapitalize="none"
+            keyboardType="email-address"
+            iconPack={Feather}
+            iconSize={15}
+            onInputChanged={inputChangedHandler}
+            errorText={formState.inputValidities["email"]}
+            initialValue={userData.email}
+          />
+          <Input
+            label="About"
+            icon="user-o"
+            id="about"
+            autoCapitalize="none"
+            iconPack={FontAwesome}
+            iconSize={15}
+            onInputChanged={inputChangedHandler}
+            errorText={formState.inputValidities["about"]}
+            initialValue={userData.about}
+          />
 
-        <View style={{ marginTop: 20 }}>
-          {showSuccessMessage && <Text>Saved!</Text>}
+          <View style={{ marginTop: 20 }}>
+            {showSuccessMessage && <Text>Saved!</Text>}
 
-          {isLoading ? (
-            <ActivityIndicator
-              size={"small"}
-              color={colors.primary}
-              style={{ marginTop: 10 }}
-            />
-          ) : (
-            hasChanges() && (
-              <SubmitButton
-                title="Save"
-                onPress={saveHandler}
-                style={{ marginTop: 20 }}
-                disabled={!formState.formIsValid}
+            {isLoading ? (
+              <ActivityIndicator
+                size={"small"}
+                color={colors.primary}
+                style={{ marginTop: 10 }}
               />
-            )
-          )}
+            ) : (
+              hasChanges() && (
+                <SubmitButton
+                  title="Save"
+                  onPress={saveHandler}
+                  style={styles.btnSetting}
+                  disabled={!formState.formIsValid}
+                />
+              )
+            )}
+          </View>
+
+          <DataItem
+            type={"link"}
+            title="Starred messages"
+            hideImage={true}
+            onPress={() =>
+              props.navigation.navigate("DataList", {
+                title: "Starred messages",
+                data: sortedStarredMessages,
+                type: "messages",
+              })
+            }
+          />
+
+          <SubmitButton
+            title="Logout"
+            onPress={() => dispatch(userLogout(userData))}
+            style={styles.btnSetting}
+            color={colors.red}
+          />
         </View>
-
-        <DataItem
-          type={"link"}
-          title="Starred messages"
-          hideImage={true}
-          onPress={() =>
-            props.navigation.navigate("DataList", {
-              title: "Starred messages",
-              data: sortedStarredMessages,
-              type: "messages",
-            })
-          }
-        />
-
-        <SubmitButton
-          title="Logout"
-          onPress={() => dispatch(userLogout(userData))}
-          style={{ marginTop: 20 }}
-          color={colors.red}
-        />
+        
       </ScrollView>
+
     </PageContainer>
   );
 };
 
 const styles = StyleSheet.create({
-  marginTop20: {
-    marginTop: 20,
+  btnSetting: {
+    marginVertical: 20,
+    width: '100%'
   },
+
   formContainer: {
-    alignItems: "center",
+    // width: '100%',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent:'center'
+    
   },
+
+  customSetting:{
+    
+  },
+  stySetting:{
+    width: '100%',
+    // flex: 1,
+    // alignItems: 'center',
+    justifyContent:'center',
+    alignItems: 'center'
+  }
+
+
 });
 
 export default SettingsScreen;

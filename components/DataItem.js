@@ -73,6 +73,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     alignItems: "center",
     minHeight: 50,
+    width: "100%",
   },
   textContainer: {
     marginLeft: 14,
